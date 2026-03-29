@@ -1400,6 +1400,7 @@ function mtSelectMission(id){
   mtLastCraftPos=null;mtLaunchPhase=false;mtLaunchT=0;
   if(mtFlybyRing)mtFlybyRing.material.opacity=0;
   document.getElementById('mt-play').textContent='▶ PLAY';
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
   document.getElementById('mt-timeline').value=0;
   document.getElementById('mt-tl-fill').style.width='0%';
 
@@ -1482,7 +1483,7 @@ function mtSelectMission(id){
     card.innerHTML=`<div class="mt-card-agency">${m.agency} · ${m.year}</div>
       <div class="mt-card-name">${m.name}</div>
       <div class="mt-card-tag">${m.tagline}</div>`;
-    card.addEventListener('click',()=>{ if(mtBuilt) mtSelectMission(m.id); });
+    card.addEventListener('click',()=>{ if(window.speechSynthesis) window.speechSynthesis.cancel(); if(mtBuilt) mtSelectMission(m.id); });
     container.appendChild(card);
   });
 })();
@@ -1492,6 +1493,7 @@ document.getElementById('mt-play')?.addEventListener('click',()=>{
   if(!mtMission)return;
   mtPlaying=!mtPlaying;
   document.getElementById('mt-play').textContent=mtPlaying?'⏸ PAUSE':'▶ PLAY';
+  if(!mtPlaying && window.speechSynthesis) window.speechSynthesis.cancel();
 });
 document.getElementById('mt-slower')?.addEventListener('click',()=>{ mtSpd=Math.max(.1,mtSpd*.5); document.getElementById('mt-spd').textContent=(mtSpd<1?mtSpd.toFixed(1):Math.round(mtSpd))+'×'; });
 document.getElementById('mt-faster')?.addEventListener('click',()=>{ mtSpd=Math.min(50,mtSpd*2); document.getElementById('mt-spd').textContent=(mtSpd<1?mtSpd.toFixed(1):Math.round(mtSpd))+'×'; });
@@ -1499,10 +1501,12 @@ document.getElementById('mt-reset')?.addEventListener('click',()=>{
   if(!mtMission)return;
   mtT=0;mtPlaying=false;mtTrailPositions=[];mtTrailLine.geometry.setDrawRange(0,0);mtLastMilestone=-1;
   document.getElementById('mt-play').textContent='▶ PLAY';
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
   document.getElementById('mt-timeline').value=0;
   document.getElementById('mt-tl-fill').style.width='0%';
 });
 document.getElementById('mt-timeline')?.addEventListener('input',e=>{
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
   mtT=+e.target.value/1000;
   document.getElementById('mt-tl-fill').style.width=(mtT*100)+'%';
   if(mtMission){
@@ -2642,9 +2646,9 @@ function dfInit() {
   dfGeom.setAttribute('color',    new THREE.BufferAttribute(dfColors, 3));
   dfGeom.setDrawRange(0, 0);
   dfPoints = new THREE.Points(dfGeom, new THREE.PointsMaterial({
-    size: 3.5,               // pixel size — visible on all screen sizes
+    size: 0.03,              // PATCHED: WebGL 1.0 PointSize limits fixed
     vertexColors: true,
-    sizeAttenuation: false,  // FIXED pixel size regardless of camera distance
+    sizeAttenuation: true,   // FIXED: Scales properly now
     transparent: true,
     opacity: 0.92
   }));
@@ -2724,7 +2728,7 @@ function dfTriggerCascade() {
   }
   // Scale up dot size for dramatic effect
   if (dfPoints) {
-    dfPoints.material.size = 5.5;  // larger pixels during cascade
+    dfPoints.material.size = 0.06;  // PATCHED: larger particles during cascade
     dfPoints.material.needsUpdate = true;
   }
   dfUpdateStats();
