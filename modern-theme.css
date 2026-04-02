@@ -1,0 +1,358 @@
+/* ──────────────────────────────────────────────────────────────
+   MODERN GLASSMORPHISM OVERRIDES - VOIDSIGNAL
+   Replaces retro hacker theme with a professional hackathon UI
+────────────────────────────────────────────────────────────── */
+
+/* ── 1. CORE VARIABLES & TOKENS ── */
+:root {
+  /* Rich, vibrant neon colors for a modern space aesthetic */
+  --g: #00F0FF;     /* Bright Cyan (was green) */
+  --c: #8B5CF6;     /* Vivid Violet (was cyan) */
+  --o: #F97316;     /* Orange */
+  --r: #EF4444;     /* Red */
+  --a: #F59E0B;     /* Amber */
+  --p: #EC4899;     /* Pink/Magenta */
+  
+  /* Deep, sophisticated dark mode backgrounds */
+  --bg: #030712;    /* Midnight blue/black */
+  --bg1: rgba(17, 24, 39, 0.55); /* Primary Glass Panel */
+  --bg2: rgba(31, 41, 55, 0.45); /* Secondary Glass Panel */
+  --bd: rgba(255, 255, 255, 0.08); /* Soft white border */
+  --dim: rgba(255, 255, 255, 0.65); /* More readable subtle text */
+  
+  /* Modern Typography - Requires links in HTML head */
+  --body: 'Inter', system-ui, sans-serif;
+  --head: 'Outfit', 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', 'Space Mono', monospace;
+  
+  /* New Effects Variables */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.25);
+  --glow-violet: 0 0 20px rgba(139, 92, 246, 0.25);
+}
+
+/* ── 2. GLOBAL DEFAULTS ── */
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  /* Elegant ambient background gradients */
+  background-image: 
+    radial-gradient(circle at top right, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at bottom left, rgba(0, 240, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 1) 0%, rgba(3, 7, 18, 1) 100%);
+  background-attachment: fixed;
+  color: #f8fafc;
+}
+
+/* Subdue the aggressive old scanline effect */
+body::after {
+  opacity: 0.15;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.015) 2px, rgba(255,255,255,.015) 4px);
+}
+
+h1, h2, h3, h4, h5, h6, .sn, .sn span {
+  font-family: var(--head);
+  letter-spacing: -0.02em;
+}
+
+/* ── 3. NAVIGATION (Frosted Glass Header) ── */
+nav {
+  background: rgba(3, 7, 18, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bd);
+  padding: 1rem 3rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+  font-family: var(--head);
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--g), var(--c));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.logo span {
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: #fff;
+}
+
+.nav-l a {
+  font-family: var(--body);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--dim);
+  padding: 0.5rem 0;
+}
+.nav-l a:hover, .nav-l a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+/* ── 4. HERO SECTION ── */
+#hero {
+  padding: 10rem 2rem 6rem;
+}
+.h-tag {
+  font-family: var(--mono);
+  border-radius: 30px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: var(--c);
+  letter-spacing: 0.15em;
+  padding: 0.4rem 1.2rem;
+  box-shadow: var(--glow-violet);
+}
+.h-title {
+  font-family: var(--head);
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #ffffff 10%, #d8b4fe 40%, #8b5cf6 60%, #00f0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.3));
+  margin-bottom: 1rem;
+}
+.h-sub {
+  font-family: var(--body);
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  max-width: 600px;
+}
+.stat-n {
+  font-family: var(--head);
+  font-weight: 700;
+  color: var(--g);
+  text-shadow: var(--glow-cyan);
+}
+.stat-l {
+  font-family: var(--body);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* ── 5. BUTTONS & CONTROLS ── */
+.btn, .share-btn, .lab-btn {
+  font-family: var(--body);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  border-radius: 8px;
+  padding: 0.8rem 1.8rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--bd);
+  color: #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.btn:hover, .share-btn:hover, .lab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  color: #fff;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+/* Primary brand buttons */
+.btn.btn-c, .lab-btn.btn-c {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.4);
+  color: #d8b4fe;
+}
+.btn.btn-c:hover, .lab-btn.btn-c:hover {
+  background: rgba(139, 92, 246, 0.9);
+  color: #fff;
+  box-shadow: var(--glow-violet);
+}
+.btn[href="#mc-s"] {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: #67e8f9;
+}
+.btn[href="#mc-s"]:hover {
+  background: var(--g);
+  color: #030712;
+  box-shadow: var(--glow-cyan);
+}
+
+/* ── 6. GLASSMORPHIC PANELS (Cards, UI Containers) ── */
+.nc, .oc, .sc, .about-box, .today-box, .apophis-bar, 
+.quiz-box, .lab-controls, .mc-stat-panel, .sw-card, 
+.term-wrap, #void-config, .mc-pass-item, .lr-item, #vbox-price, 
+#vbox-mcap, #vbox-fees, .gi, .mt-info-panel, #orr-panel {
+  background: var(--bg1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--bd);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s ease;
+}
+
+.nc:hover, .oc:hover, .sc:hover, .gi:hover {
+  transform: translateY(-5px) scale(1.01);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.15);
+}
+
+/* specific card internal fixes */
+.sc-media, .oc-vis, .ep-c {
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+}
+.oc-vis { border-radius: 12px; }
+.sc-body {
+  padding: 1.5rem;
+}
+.oc-n, .sc-n {
+  font-family: var(--head);
+  letter-spacing: 0.02em;
+  font-size: 1.1rem;
+}
+.nc-src, .oc-t, .sc-nat, .mc-stat-head {
+  font-family: var(--body);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--c);
+}
+.sc-m, .nc-ttl, .oc-k {
+  font-family: var(--body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+/* ── 7. TERMINAL & AI INTERFACE ── */
+.term-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.1);
+}
+.term-hd {
+  background: rgba(139, 92, 246, 0.1);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.term-out {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.term-ir {
+  background: rgba(0,0,0,0.3);
+}
+
+/* ── 8. CANVASES & WRAPPERS ── */
+.iss3d-wrap, .mc-map-wrap, .lab-cv-wrap, .mt-cv-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--bd);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5), var(--glass-shadow);
+}
+#orrery-s [style*="aspect-ratio"] {
+  border-radius: 16px;
+}
+.lab-readout, .mc-row-grid, .dv-budget {
+  gap: 0.8rem;
+}
+.lr-item {
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+}
+
+/* ── 9. SECTION HEADERS ── */
+.sh {
+  margin-bottom: 3.5rem;
+}
+.sn {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+.st {
+  font-family: var(--body);
+  font-weight: 800;
+  background: rgba(255,255,255,0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  color: #fff;
+  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+}
+.sl {
+  background: linear-gradient(90deg, var(--bd), transparent);
+  height: 2px;
+}
+
+/* ── 10. TAB BAR & INPUTS ── */
+.tab-bar, .lab-tab-bar {
+  border-bottom: 1px solid var(--bd);
+  margin-bottom: 3rem;
+}
+.tab-btn, .lab-tab-btn {
+  font-family: var(--body);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  color: var(--dim);
+  padding: 1rem 1.5rem;
+}
+.tab-btn.on, .lab-tab-btn.on {
+  color: var(--g);
+  border-bottom: 3px solid var(--g);
+  background: linear-gradient(0deg, rgba(0, 240, 255, 0.1) 0%, transparent 100%);
+}
+.lc-select, .lc-input {
+  border-radius: 6px;
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  font-family: var(--body);
+  padding: 0.5rem;
+}
+
+/* ── 11. QUIZ FIXES ── */
+.quiz-opt {
+  border-radius: 12px;
+  font-family: var(--body);
+  font-size: 0.9rem;
+  padding: 1.2rem;
+}
+.quiz-score-track {
+  border-radius: 10px;
+}
+.quiz-score-fill {
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--g);
+}
+
+/* ── 12. SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ── 13. ANIMATIONS ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.nc, .oc, .sc, .gi {
+  animation: fadeIn 0.6s ease-out forwards;
+}
