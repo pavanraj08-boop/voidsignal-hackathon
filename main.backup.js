@@ -2575,7 +2575,7 @@ function buildScene(canvasId, camDist = 4) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return null;
   const W = canvas.parentElement.offsetWidth || 700;
-  const H = canvas.parentElement.offsetHeight || 500;
+  const H = Math.max(360, Math.round(W * 9 / 16));
   canvas.width = W; canvas.height = H;
 
   const scene    = new THREE.Scene();
@@ -2651,7 +2651,7 @@ function buildScene(canvasId, camDist = 4) {
   // Resize
   function onResize() {
     const W2 = canvas.parentElement.offsetWidth || 700;
-    const H2 = canvas.parentElement.offsetHeight || 500;
+    const H2 = Math.max(360, Math.round(W2 * 9 / 16));
     canvas.width = W2; canvas.height = H2;
     renderer.setSize(W2, H2);
     camera.aspect = W2 / H2;
@@ -7271,7 +7271,3 @@ if(bioSec)bioObs.observe(bioSec);
   els.forEach(el => obs.observe(el));
 })();
 
-
-
-// FORCED INIT FOR SPLIT PANE
-setTimeout(function(){ if(typeof rfInit !== 'undefined') rfInit(); if(typeof osInit !== 'undefined') osInit(); if(typeof dfInit !== 'undefined') dfInit(); if(typeof dvInit !== 'undefined') dvInit(); if(typeof apInit !== 'undefined') apInit(); }, 1500);

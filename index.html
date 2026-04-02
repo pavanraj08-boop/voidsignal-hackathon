@@ -3,401 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VøidSignal | Aerospace Intelligence Platform</title>
-<meta name="description" content="Live ISS tracking, space weather, orbital simulations, and AI-powered aerospace intelligence. Built for the Bags Hackathon.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>VøidSignal | Tactical Command</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="modern-theme.css">
-<link rel="stylesheet" href="bento.css">
+<link rel="stylesheet" href="command-center.css">
 </head>
 <body>
 
-<canvas id="sf"></canvas>
-
-<!-- ① STICKY TOP BAR -->
-<div class="top-bar" id="top-bar">
-  <a class="top-bar-logo" href="#hero">VøID<span>SIGNAL</span></a>
-  <div class="top-bar-stats">
-    <div class="tbs-item">
-      <span class="tbs-dot tbs-green"></span>
-      <span class="tbs-label">ISS ALT</span>
-      <span class="tbs-val" id="tb-iss-alt">408 km</span>
-    </div>
-    <div class="tbs-sep"></div>
-    <div class="tbs-item">
-      <span class="tbs-dot tbs-amber"></span>
-      <span class="tbs-label">SOLAR Kp</span>
-      <span class="tbs-val" id="tb-kp">—</span>
-    </div>
-    <div class="tbs-sep"></div>
-    <div class="tbs-item">
-      <span class="tbs-dot tbs-purple"></span>
-      <span class="tbs-label">$VOID</span>
-      <span class="tbs-val" id="tb-void-price">—</span>
-    </div>
-  </div>
-  <div class="top-bar-nav">
-    <a href="#bento-grid">EXPLORE</a>
-    <a href="#terminal-s">AI</a>
-    <a href="#tle-s">TLE</a>
-    <a href="#cost-s">COST</a>
-    <a href="#bio-s">BIO</a>
-    <a href="#void-s" class="tbn-void">$VOID</a>
-  </div>
-  <div class="top-bar-right">
-    <button class="sound-btn" id="sound-btn" onclick="toggleSound()">♪ SOUND</button>
-    <a class="nav-social" href="https://twitter.com/VoidSignal" target="_blank">@VOIDSIGNAL</a>
-    <button class="hamburger" id="ham" onclick="toggleMobile()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</div>
-
-<!-- Mobile menu -->
-<div class="mobile-menu" id="mob-menu">
-  <a href="#bento-grid" onclick="toggleMobile()">EXPLORE</a>
-  <a href="#terminal-s" onclick="toggleMobile()">AI TERMINAL</a>
-  <a href="#void-s" onclick="toggleMobile()" style="color:var(--a)">$VOID</a>
-</div>
-
-<!-- ② HERO — full viewport, 3D Earth background -->
-<section id="hero">
-  <canvas id="hero-cv"></canvas>
-  <div class="h-tag">// AUTONOMOUS SPACE INTELLIGENCE //</div>
-  <h1 class="h-title">VøIDSIGNAL</h1>
-  <p class="h-sub">Complex aerospace science, orbital mechanics, and simulations powered by sophisticated AI. Built for the Bags Hackathon.</p>
-  <div class="h-stats" id="hero-stats">
-    <div><span class="stat-n" id="s1">60</span><span class="stat-l">TRACKED OBJECTS</span></div>
-    <div><span class="stat-n" id="s2">7.8</span><span class="stat-l">KM/S ORBITAL VEL</span></div>
-    <div><span class="stat-n" id="s3">40</span><span class="stat-l">DAY CONTENT RUN</span></div>
-    <div><span class="stat-n">∞</span><span class="stat-l">THINGS TO LEARN</span></div>
-  </div>
-  <a href="#bento-grid" class="btn btn-hero-cta">EXPLORE THE GRID ↓</a>
-  <div class="scroll-hint">▾ SCROLL TO EXPLORE</div>
-</section>
-
-<!-- ③ BENTO GRID -->
-<div id="bento-grid" class="bento-outer">
-  <div class="bento-label">// VOIDSIGNAL MISSION CONTROL //</div>
-  <div class="bento-grid">
-
-    <!-- ROW A: Live Data -->
-    <div class="bento-row-label">ROW A · LIVE DATA</div>
-
-    <!-- A1: ISS 3D Tracker -->
-    <div class="bcard bcard-a1" id="iss3d-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// LIVE 3D</span>
-        <span class="bcard-title">ISS ORBIT</span>
-        <span class="bcard-live"><span class="live-dot"></span>LIVE</span>
-      </div>
-      <div class="bcard-body" style="padding:0;overflow:hidden">
-        <div class="iss3d-wrap" style="height:100%;min-height:320px">
-          <canvas id="iss3d-cv"></canvas>
-          <div class="iss3d-hud">
-            <div class="iss3d-hud-title">ISS · EXPEDITION</div>
-            <div class="iss3d-rows">
-              <div class="iss3d-row">LAT <span id="iss3d-lat">—</span></div>
-              <div class="iss3d-row">LON <span id="iss3d-lon">—</span></div>
-              <div class="iss3d-row">ALT <span id="iss3d-alt">408 km</span></div>
-              <div class="iss3d-row">VEL <span id="iss3d-vel">7.66 km/s</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="bcard-footer-row">
-          <button class="lab-btn" id="iss3d-follow" style="font-size:.58rem;padding:.3rem .7rem">📡 FOLLOW</button>
-          <button class="lab-btn secondary" id="iss3d-overview" style="font-size:.58rem;padding:.3rem .7rem">🌍 OVERVIEW</button>
-          <button class="lab-btn secondary" id="iss3d-orbit" style="font-size:.58rem;padding:.3rem .7rem">🔄 ORBIT</button>
-          <span style="font-size:.55rem;color:var(--dim);margin-left:auto">LAST: <span id="iss3d-ts" style="color:var(--g)">connecting...</span></span>
-        </div>
+  <!-- LEFT PANE: DATA & CONTROLS -->
+  <div id="left-pane">
+    <div style="padding: 2.5rem 2rem 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: rgba(2, 4, 10, 0.95); z-index: 20; backdrop-filter: blur(12px);">
+      <h1 style="font-family: var(--head); font-weight: 900; margin: 0; font-size: 2.5rem; color: #fff; letter-spacing:-0.03em;">VøID<span style="color:var(--c)">SIGNAL</span></h1>
+      <div style="font-size: 0.65rem; color: var(--dim); letter-spacing: 0.25em; margin-top: 0.2rem;">AUTONOMOUS AEROSPACE INTELLIGENCE</div>
+      <div style="display: flex; gap: 1rem; margin-top: 1.2rem;">
+        <div style="font-size: 0.65rem; color: var(--g);"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g);margin-right:4px;box-shadow:0 0 5px var(--g);"></span>UPLINK SECURE</div>
+        <div style="font-size: 0.65rem; color: var(--a);" id="tb-void-price">$VOID: —</div>
       </div>
     </div>
 
-    <!-- A2: Mission Control -->
-    <div class="bcard bcard-a2">
-      <div class="bcard-header">
-        <span class="bcard-tag">// TELEMETRY</span>
-        <span class="bcard-title">MISSION CONTROL</span>
-        <span class="bcard-live"><span class="live-dot"></span>LIVE</span>
-      </div>
-      <div class="bcard-body" id="mc-s">
-        <div class="mc-grid">
-          <div class="mc-stat-panel">
-            <div class="mc-stat-head">Position</div>
-            <div class="mc-row-grid">
-              <div class="mc-kv"><div class="mc-k">Latitude</div><div class="mc-v green" id="mc-lat">—</div></div>
-              <div class="mc-kv"><div class="mc-k">Longitude</div><div class="mc-v green" id="mc-lon">—</div></div>
-              <div class="mc-kv"><div class="mc-k">Altitude</div><div class="mc-v cyan" id="mc-alt">408 km</div></div>
-              <div class="mc-kv"><div class="mc-k">Speed</div><div class="mc-v cyan" id="mc-vel">7.66 km/s</div></div>
-            </div>
-          </div>
-          <div class="mc-stat-panel">
-            <div class="mc-stat-head">Orbital Mechanics</div>
-            <div class="mc-big-val" id="mc-period">92.9 <span style="font-size:.9rem">min</span></div>
-            <div class="mc-sub">ORBITAL PERIOD</div>
-            <div class="mc-orbit-bar"><div class="mc-orbit-fill" id="mc-orbit-fill" style="width:0%"></div></div>
-            <div style="margin-top:.7rem" class="mc-row-grid">
-              <div class="mc-kv"><div class="mc-k">Orbits today</div><div class="mc-v amber" id="mc-orbits-day">—</div></div>
-              <div class="mc-kv"><div class="mc-k">Total orbits</div><div class="mc-v" id="mc-total-orbits">—</div></div>
-              <div class="mc-kv"><div class="mc-k">Inclination</div><div class="mc-v">51.6°</div></div>
-              <div class="mc-kv"><div class="mc-k">Days in orbit</div><div class="mc-v green" id="mc-days-orbit">—</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="mc-stat-panel" style="margin-top:.7rem">
-          <div class="mc-stat-head">Crew Manifest — <span id="mc-crew-count" style="color:var(--g)">loading...</span></div>
-          <div id="mc-crew-grid" class="mc-crew-grid"><div class="mc-error-msg">⬡ FETCHING CREW DATA...</div></div>
-        </div>
-        <div class="mc-footer-row" style="margin-top:.7rem">
-          <span>Data: <span style="color:var(--c)">wheretheiss.at</span></span>
-          <span id="mc-last-update" style="color:var(--g)">⬡ CONNECTING...</span>
-          <span>NORAD: <span style="color:var(--a)">25544</span></span>
-        </div>
-      </div>
+    <!-- ISS TELEMETRY -->
+    <div class="tac-section active-focus" data-scene="scene-iss3d" id="sec-iss3d">
+       <span class="tac-st">// ORBITAL TRACKING</span>
+       <h2 class="tac-sn">ISS TELEMETRY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live tracking of the International Space Station trajectory and orbital parameters.</p>
+       
+       <div class="hud-panel" style="margin-top: 1.5rem;">
+          <div class="hud-row"><div class="hud-label">LATITUDE</div><div class="hud-val hud-green" id="iss3d-lat">—</div></div>
+          <div class="hud-row"><div class="hud-label">LONGITUDE</div><div class="hud-val hud-green" id="iss3d-lon">—</div></div>
+          <div class="hud-row"><div class="hud-label">ALTITUDE</div><div class="hud-val hud-cyan" id="iss3d-alt">408 km</div></div>
+          <div class="hud-row"><div class="hud-label">VELOCITY</div><div class="hud-val hud-cyan" id="iss3d-vel">7.66 km/s</div></div>
+          <div class="hud-row" style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px dashed rgba(255,255,255,0.1);"><div class="hud-label">ILLUMINATION</div><div class="hud-val hud-amber" id="iss3d-vis">—</div></div>
+       </div>
+
+       <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <button class="lab-btn" id="iss3d-follow" style="font-size:0.6rem; padding:0.4rem 0.8rem;">📡 FOLLOW</button>
+          <button class="lab-btn secondary" id="iss3d-overview" style="font-size:0.6rem; padding:0.4rem 0.8rem;">🌍 OVERVIEW</button>
+          <button class="lab-btn secondary" id="iss3d-orbit" style="font-size:0.6rem; padding:0.4rem 0.8rem;">🔄 ORBIT PATH</button>
+       </div>
+       <div style="font-size: 0.55rem; color:var(--dim); margin-top: 0.8rem;">LAST UPDATE: <span id="iss3d-ts">connecting...</span></div>
     </div>
 
-    <!-- A3: Space Weather -->
-    <div class="bcard bcard-a3" id="sw-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// NOAA SWPC</span>
-        <span class="bcard-title">SPACE WEATHER</span>
-        <span class="bcard-live"><span class="live-dot tbs-amber"></span>LIVE</span>
-      </div>
-      <div class="bcard-body">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
-          <div class="sw-card" id="sw-kp-card">
-            <div class="sw-label">Kp INDEX <span class="sw-badge" id="sw-kp-badge">QUIET</span></div>
-            <div class="sw-big" id="sw-kp">—</div>
-            <div class="sw-sub">Geomagnetic 0–9</div>
-            <div class="sw-bar-track"><div class="sw-bar-fill" id="sw-kp-bar" style="width:0%"></div></div>
-          </div>
-          <div class="sw-card">
-            <div class="sw-label">SOLAR WIND</div>
-            <div class="sw-big" id="sw-wind">—</div>
-            <div class="sw-sub">km/s at L1</div>
-          </div>
-          <div class="sw-card">
-            <div class="sw-label">X-RAY FLUX</div>
-            <div class="sw-big" id="sw-xray">—</div>
-            <div class="sw-sub">Solar flare level</div>
-          </div>
-          <div class="sw-card" id="sw-aurora-card">
-            <div class="sw-label">AURORA PROB.</div>
-            <div class="sw-big" id="sw-aurora">—</div>
-            <div class="sw-sub" id="sw-aurora-sub">Enable location</div>
-          </div>
-          <div class="sw-card">
-            <div class="sw-label">PROTON DENSITY</div>
-            <div class="sw-big" id="sw-proton">—</div>
-            <div class="sw-sub">p/cm³</div>
-          </div>
-          <div class="sw-card">
-            <div class="sw-label">IMF Bz</div>
-            <div class="sw-big" id="sw-bz">—</div>
-            <div class="sw-sub" id="sw-bz-sub">Interplanetary B-field</div>
-          </div>
-        </div>
-        <div id="sw-storm-banner" style="display:none;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.4);padding:.5rem .8rem;font-size:.62rem;color:var(--o);letter-spacing:.1em;text-align:center;margin-top:.7rem;animation:kpulse 1.5s ease-in-out infinite">
-          ⚠ GEOMAGNETIC STORM IN PROGRESS
-        </div>
-        <div style="font-size:.58rem;color:var(--dim);margin-top:.7rem;line-height:1.6"><span id="sw-updated">LIVE · NOAA SWPC</span></div>
-      </div>
+    <!-- JWST OBSERVATORY -->
+    <div class="tac-section" data-scene="scene-jwst" id="sec-jwst">
+       <span class="tac-st">// L2 OBSERVATORY</span>
+       <h2 class="tac-sn">JWST TRACKER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Monitoring the James Webb Space Telescope in its halo orbit around the Sun-Earth L2 Lagrange point.</p>
+       <div id="jwst-lagrange-info" style="background:rgba(17,24,39,0.75); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:1rem; font-size:.62rem; color:var(--dim); line-height:1.7; margin-top:1rem;">
+         <div style="color:var(--p);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem">⬡ LAGRANGE POINTS</div>
+         <div><span style="color:#00FF9F">L1</span> · Sunward 1.5M km · SOHO</div>
+         <div><span style="color:#8B5CF6">L2</span> · Anti-sun 1.5M km · JWST</div>
+       </div>
     </div>
 
-    <!-- ROW B: Simulations -->
-    <div class="bento-row-label">ROW B · SIMULATIONS</div>
-
-    <!-- B1: Mission Theater -->
-    <div class="bcard bcard-b1" id="mt-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// TRAJECTORY SIM</span>
-        <span class="bcard-title">MISSION THEATER</span>
-        <span class="bcard-sub">6 MISSIONS · REAL TRAJECTORIES</span>
-      </div>
-      <div class="bcard-body" style="padding:.8rem">
-        <div class="mt-cards" id="mt-cards"></div>
-        <div class="mt-cv-wrap" style="min-height:340px">
-          <canvas id="mt-cv"></canvas>
-          <div class="mt-overlay-tl">
-            <div class="mt-mission-title" id="mt-title">SELECT A MISSION</div>
-            <div class="mt-phase-name" id="mt-phase">—</div>
-            <div class="mt-date-display" id="mt-date">—</div>
-          </div>
-          <div class="mt-info-panel" id="mt-info">
-            <div class="mt-info-title" id="mt-info-title"></div>
-            <div class="mt-info-type" id="mt-info-type"></div>
-            <div class="mt-info-rows" id="mt-info-rows"></div>
-          </div>
-          <div class="mt-milestone-banner" id="mt-milestone"></div>
-        </div>
-        <div id="mt-desc-text" style="font-size:.62rem;color:rgba(255,255,255,.72);line-height:1.7;padding:.5rem .8rem;background:var(--bg1);border:1px solid var(--bd);border-left:2px solid var(--c);min-height:2.5rem;margin-bottom:.5rem;transition:border-color .4s">Select a mission and press Play to begin.</div>
-        <div class="mt-controls">
-          <button class="btn" id="mt-play" style="padding:.35rem .8rem;font-size:.58rem">▶ PLAY</button>
-          <button class="btn secondary" id="mt-slower" style="padding:.35rem .7rem;font-size:.58rem">◀◀</button>
-          <button class="btn secondary" id="mt-faster" style="padding:.35rem .7rem;font-size:.58rem">▶▶</button>
-          <button class="btn btn-c" id="mt-reset" style="padding:.35rem .7rem;font-size:.58rem">⟳</button>
-          <span style="font-size:.55rem;color:var(--dim)">SPD: <span id="mt-spd" style="color:var(--g)">1×</span></span>
-          <div class="mt-cam-btns">
-            <button class="mt-cam-btn active" data-cam="cinematic">🎬</button>
-            <button class="mt-cam-btn" data-cam="orbit">🌐</button>
-            <button class="mt-cam-btn" data-cam="top">⬆</button>
-          </div>
-        </div>
-        <div class="mt-timeline-wrap">
-          <div class="mt-timeline-track"><div class="mt-timeline-fill" id="mt-tl-fill"></div></div>
-          <div class="mt-phase-markers" id="mt-phase-marks"></div>
-          <input type="range" id="mt-timeline" min="0" max="1000" value="0">
-        </div>
-        <div style="display:flex;gap:1rem;font-size:.55rem;color:var(--dim)">
-          <span id="mt-craft-spd">—</span>
-          <span id="mt-light-delay" style="color:var(--c)">—</span>
-          <span id="mt-scale-rel">—</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- B2: Orbital Epitaphs -->
-    <div class="bcard bcard-b2" id="epitaphs-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// LOST TO THE VOID</span>
-        <span class="bcard-title">ORBITAL EPITAPHS</span>
-        <span class="bcard-sub">FORGOTTEN SATELLITES</span>
-      </div>
-      <div class="bcard-body" style="padding:.8rem;overflow-y:auto">
-        <div class="ep-g" id="ep-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.8rem">
-          <!-- populated by main.js -->
-        </div>
-        <div class="sat-g" id="fg" style="margin-top:.8rem"></div>
-      </div>
-    </div>
-
-    <!-- ROW C: Universe -->
-    <div class="bento-row-label">ROW C · UNIVERSE</div>
-
-    <!-- C1: Solar System Orrery (wide) -->
-    <div class="bcard bcard-c1" id="orrery-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// LIVE SIMULATION</span>
-        <span class="bcard-title">SOLAR SYSTEM <span style="color:var(--c)">ORRERY</span></span>
-        <span class="bcard-live"><span class="live-dot"></span><span id="orr-clock">SIMULATING REAL ORBITS</span></span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.6rem;flex-wrap:wrap">
-          <button class="btn" id="orr-slower" style="padding:.3rem .7rem;font-size:.58rem">◀◀</button>
-          <button class="btn" id="orr-pause" style="padding:.3rem .7rem;font-size:.58rem">⏸</button>
-          <button class="btn" id="orr-faster" style="padding:.3rem .7rem;font-size:.58rem">▶▶</button>
-          <button class="btn btn-c" id="orr-reset" style="padding:.3rem .7rem;font-size:.58rem">⟳</button>
-          <span style="font-size:.58rem;color:var(--dim)">SPD: <span id="orr-speed-lbl" style="color:var(--g)">1×</span></span>
-          <span style="font-size:.58rem;color:var(--dim);margin-left:.4rem" id="orr-clock-sm"></span>
-        </div>
-        <div style="position:relative;width:100%;background:#01020A;border:1px solid var(--bd);overflow:hidden;border-radius:12px">
-          <canvas id="orr-cv" style="display:block;width:100%"></canvas>
-          <div id="orr-panel" style="display:none;position:absolute;top:10px;right:10px;background:rgba(3,6,16,.94);border:1px solid var(--bd);padding:.8rem 1rem;min-width:200px;max-width:250px;backdrop-filter:blur(12px);pointer-events:none;border-left:2px solid var(--c)">
+    <!-- SOLAR SYSTEM ORRERY -->
+    <div class="tac-section" data-scene="scene-orrery" id="sec-orrery">
+       <span class="tac-st">// DEEP SPACE</span>
+       <h2 class="tac-sn">SOLAR ORRERY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live kinematic simulation of planetary bodies and major probes.</p>
+       <div style="display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn" id="orr-slower" style="padding:.4rem .8rem;font-size:.6rem">◀◀</button>
+          <button class="btn" id="orr-pause" style="padding:.4rem .8rem;font-size:.6rem">⏸</button>
+          <button class="btn" id="orr-faster" style="padding:.4rem .8rem;font-size:.6rem">▶▶</button>
+          <button class="btn btn-c" id="orr-reset" style="padding:.4rem .8rem;font-size:.6rem">⟳</button>
+       </div>
+       <div style="font-size:0.6rem; color:var(--dim); margin-top:0.8rem;">SIM SPEED: <span id="orr-speed-lbl" style="color:var(--g)">1×</span> <span id="orr-clock-sm" style="margin-left:8px;"></span></div>
+       <div id="orr-legend" style="display:flex; gap:.8rem; flex-wrap:wrap; margin-top:.7rem; font-size:.52rem; color:var(--dim)"></div>
+       <div id="orr-panel" style="display:none; margin-top:1rem; background:rgba(3,6,16,.94); border:1px solid var(--bd); padding:.8rem; border-left:2px solid var(--c)">
             <div id="orr-panel-name" style="font-family:var(--head);font-size:.85rem;color:#fff;margin-bottom:.25rem"></div>
             <div id="orr-panel-type" style="font-size:.52rem;color:var(--c);letter-spacing:.2em;margin-bottom:.6rem"></div>
             <div id="orr-panel-rows" style="display:flex;flex-direction:column;gap:.25rem;font-size:.6rem"></div>
-          </div>
-        </div>
-        <div id="orr-legend" style="display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.7rem;font-size:.52rem;color:var(--dim)"></div>
-      </div>
+       </div>
     </div>
 
-    <!-- C2: Deep Space Network (narrow) -->
-    <div class="bcard bcard-c2" id="dsn-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// LIVE TX/RX</span>
-        <span class="bcard-title">DEEP SPACE NET</span>
-        <span class="bcard-live"><span class="live-dot tbs-amber"></span>LIVE</span>
-      </div>
-      <div class="bcard-body">
-        <p style="font-size:.62rem;color:var(--dim);line-height:1.7;margin-bottom:.8rem">NASA's 3 antenna complexes 120° apart — the only way to talk to spacecraft beyond Earth orbit.</p>
-        <div style="display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:.7rem;font-size:.58rem">
-          <span style="color:var(--g)">● TX UPLINK</span>
-          <span style="color:var(--c)">● RX DOWNLINK</span>
-          <span style="color:var(--dim)">● STANDBY</span>
-          <span style="margin-left:auto;color:var(--dim)" id="dsn-ts">⬡ CONNECTING...</span>
-        </div>
-        <div class="dsn-complex-grid" id="dsn-grid">
-          <div class="dsn-loading">⬡ CONNECTING TO DSN...</div>
-        </div>
-        <div id="dsn-contacts" style="margin-top:.8rem"></div>
-      </div>
+    <!-- MISSION THEATER -->
+    <div class="tac-section" data-scene="scene-mt" id="sec-mt">
+       <span class="tac-st">// TRAJECTORY REPLAY</span>
+       <h2 class="tac-sn">MISSION THEATER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Reconstruct historic Apollo and Artemis trajectories.</p>
+       <div class="mt-cards" id="mt-cards" style="margin-top:1rem;"></div>
+       
+       <div class="hud-panel" style="margin-top:1rem;">
+          <div class="hud-row"><div class="hud-label">MISSION</div><div class="hud-val" id="mt-title">SELECT A MISSION</div></div>
+          <div class="hud-row"><div class="hud-label">PHASE</div><div class="hud-val hud-cyan" id="mt-phase">—</div></div>
+          <div class="hud-row"><div class="hud-label">DATE</div><div class="hud-val" id="mt-date">—</div></div>
+       </div>
+       
+       <div style="display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn" id="mt-play" style="padding:.4rem .8rem;font-size:.6rem">▶ PLAY</button>
+          <button class="btn secondary" id="mt-slower" style="padding:.4rem .8rem;font-size:.6rem">◀◀</button>
+          <button class="btn secondary" id="mt-faster" style="padding:.4rem .8rem;font-size:.6rem">▶▶</button>
+          <button class="btn btn-c" id="mt-reset" style="padding:.4rem .8rem;font-size:.6rem">⟳</button>
+          <span style="font-size:.6rem; color:var(--dim); margin-left:auto; align-self:center;">SPD: <span id="mt-spd" style="color:var(--g)">1×</span></span>
+       </div>
+       
+       <div class="mt-timeline-wrap" style="margin-top:1.5rem;">
+          <div class="mt-timeline-track"><div class="mt-timeline-fill" id="mt-tl-fill"></div></div>
+          <div class="mt-phase-markers" id="mt-phase-marks"></div>
+          <input type="range" id="mt-timeline" min="0" max="1000" value="0">
+       </div>
+       <div id="mt-info" style="display:none;">
+          <div id="mt-info-title"></div><div id="mt-info-type"></div><div id="mt-info-rows"></div>
+       </div>
+       <div id="mt-milestone" style="display:none;"></div>
     </div>
 
-    <!-- ROW D: Lab Tools -->
-    <div class="bento-row-label">ROW D · LAB TOOLS</div>
-
-    <!-- D1: Reentry Forge -->
-    <div class="bcard bcard-d1" id="reentry-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// SIMULATION</span>
-        <span class="bcard-title">🔥 REENTRY FORGE</span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div class="lab-layout" style="grid-template-columns:1fr;gap:.6rem">
-          <div class="lab-controls" style="padding:.8rem;gap:.6rem">
-            <div><div class="lc-label">Satellite</div>
-              <select class="lc-select" id="rf-sat">
-                <option value="custom">— Custom —</option>
-                <option value="skylab">Skylab (1979) — 77t</option>
-                <option value="mir">Mir (2001) — 135t</option>
-                <option value="tiangong">Tiangong-1 (2018)</option>
-                <option value="rosat">ROSAT (2011)</option>
-              </select></div>
-            <div><div class="lc-label">Mass (kg) <span id="rf-mass-v" class="lc-val">2400</span></div>
-              <input type="range" class="lc-input" id="rf-mass" min="100" max="200000" value="2400" step="100"></div>
-            <div><div class="lc-label">Alt (km) <span id="rf-alt-v" class="lc-val">400</span></div>
-              <input type="range" class="lc-input" id="rf-alt" min="150" max="600" value="400" step="5"></div>
-            <div style="display:flex;gap:.4rem">
-              <button class="lab-btn" id="rf-btn-sim" style="font-size:.58rem">▶ SIMULATE</button>
-              <button class="lab-btn secondary" id="rf-btn-reset" style="font-size:.58rem">⟳</button>
-            </div>
-            <div id="rf-status" class="lab-status ls-orbit">AWAITING</div>
-          </div>
-          <div class="lab-cv-wrap" style="min-height:200px"><canvas id="rf-cv"></canvas></div>
-          <div class="lab-readout" style="grid-template-columns:repeat(3,1fr);gap:.4rem">
-            <div class="lr-item"><div class="lr-label">Altitude</div><div class="lr-val" id="rf-r-alt">—</div></div>
-            <div class="lr-item"><div class="lr-label">Heating</div><div class="lr-val" id="rf-r-heat">—</div></div>
-            <div class="lr-item"><div class="lr-label">Survives?</div><div class="lr-val" id="rf-r-surv">—</div></div>
-          </div>
-        </div>
-      </div>
+    <!-- STARLINK DENSITY -->
+    <div class="tac-section" data-scene="scene-sl" id="sec-sl">
+       <span class="tac-st">// MEGACONSTELLATIONS</span>
+       <h2 class="tac-sn">STARLINK DENSITY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Visualizing the orbital congestion in Low Earth Orbit (LEO).</p>
+       <div class="hud-panel" style="margin-top:1rem;">
+          <div class="hud-row"><div class="hud-label">TOTAL SATS</div><div class="hud-val" id="sl-total">—</div></div>
+          <div class="hud-row"><div class="hud-label">ACTIVE SHELLS</div><div class="hud-val hud-green" id="sl-active">6</div></div>
+          <div class="hud-row"><div class="hud-label">ORBITAL PLANES</div><div class="hud-val" id="sl-planes">72+</div></div>
+          <div class="hud-row"><div class="hud-label">KESSLER RISK</div><div class="hud-val" style="color:#FF4444;" id="sl-risk">ELEVATED</div></div>
+       </div>
+       <div id="sl-legend-3d" style="display:flex;flex-direction:column;gap:.3rem;font-size:.52rem;margin-top:1rem;"></div>
     </div>
 
-    <!-- D2: Orbital Sandbox -->
-    <div class="bcard bcard-d2" id="sandbox-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// SIMULATION</span>
-        <span class="bcard-title">⚙ ORBITAL SANDBOX</span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div class="lab-controls" style="padding:.8rem;gap:.6rem">
+    <!-- SPACE WEATHER -->
+    <div class="tac-section" data-scene="scene-blank" id="sec-hw">
+       <span class="tac-st">// NOAA INTEL</span>
+       <h2 class="tac-sn">SPACE WEATHER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live geomagnetic and solar wind data.</p>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-top:1rem;">
+          <div class="sw-card"><div class="sw-label">Kp INDEX</div><div class="sw-big" id="sw-kp">—</div></div>
+          <div class="sw-card"><div class="sw-label">SOLAR WIND</div><div class="sw-big" id="sw-wind">—</div><div class="sw-sub">km/s</div></div>
+          <div class="sw-card"><div class="sw-label">X-RAY FLUX</div><div class="sw-big" id="sw-xray">—</div></div>
+          <div class="sw-card"><div class="sw-label">AURORA PROB</div><div class="sw-big" id="sw-aurora">—</div></div>
+       </div>
+       <div id="sw-storm-banner" style="display:none;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.4);padding:.5rem .8rem;font-size:.62rem;color:var(--o);letter-spacing:.1em;text-align:center;margin-top:.7rem;animation:kpulse 1.5s ease-in-out infinite">
+          ⚠ GEOMAGNETIC STORM IN PROGRESS
+       </div>
+    </div>
+    
+    <!-- ORBITAL SANDBOX -->
+    <div class="tac-section" data-scene="scene-os" id="sec-os">
+       <span class="tac-st">// PHYSICS ENGINE</span>
+       <h2 class="tac-sn">ORBITAL SANDBOX</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
           <div><div class="lc-label">Semi-major axis <span id="os-sma-v" class="lc-val">6771 km</span></div>
-            <input type="range" class="lc-input" id="os-sma" min="6571" max="42164" value="6771" step="50"></div>
+               <input type="range" class="lc-input" id="os-sma" min="6571" max="42164" value="6771" step="50"></div>
           <div><div class="lc-label">Eccentricity <span id="os-ecc-v" class="lc-val">0.00</span></div>
-            <input type="range" class="lc-input" id="os-ecc" min="0" max="0.9" value="0" step="0.01"></div>
+               <input type="range" class="lc-input" id="os-ecc" min="0" max="0.9" value="0" step="0.01"></div>
           <div><div class="lc-label">Inclination <span id="os-inc-v" class="lc-val">0°</span></div>
-            <input type="range" class="lc-input" id="os-inc" min="0" max="180" value="0" step="1"></div>
-          <div class="lab-readout" style="grid-template-columns:repeat(2,1fr);gap:.4rem">
-            <div class="lr-item"><div class="lr-label">Period</div><div class="lr-val" id="os-period">88 min</div></div>
-            <div class="lr-item"><div class="lr-label">Velocity</div><div class="lr-val" id="os-vel">7.8 km/s</div></div>
-          </div>
-          <div class="match-sat" id="os-match">Closest: <strong>ISS</strong></div>
-        </div>
-        <div class="lab-cv-wrap" style="min-height:200px"><canvas id="os-cv"></canvas></div>
-      </div>
+               <input type="range" class="lc-input" id="os-inc" min="0" max="180" value="0" step="1"></div>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">PERIOD</div><div class="hud-val hud-cyan" id="os-period">88 min</div></div>
+          <div class="hud-row"><div class="hud-label">VELOCITY</div><div class="hud-val hud-cyan" id="os-vel">7.8 km/s</div></div>
+          <div class="hud-row" style="margin-top:0.5rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.5rem;"><div class="hud-label">MATCH</div><div class="hud-val hud-amber" id="os-match">ISS</div></div>
+       </div>
     </div>
 
-    <!-- D3: Delta-V Planner -->
-    <div class="bcard bcard-d3" id="deltav-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// SIMULATION</span>
-        <span class="bcard-title">🚀 DELTA-V PLANNER</span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div class="lab-controls" style="padding:.8rem;gap:.6rem">
-          <div><div class="lc-label">Origin</div>
+    <!-- REENTRY FORGE -->
+    <div class="tac-section" data-scene="scene-rf" id="sec-rf">
+       <span class="tac-st">// PHYSICS ENGINE</span>
+       <h2 class="tac-sn">REENTRY FORGE</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+          <div><div class="lc-label">Vehicle</div>
+            <select class="lc-select" id="rf-sat">
+              <option value="custom">— Custom —</option>
+              <option value="skylab">Skylab (1979) — 77t</option>
+              <option value="mir">Mir (2001) — 135t</option>
+            </select></div>
+          <div><div class="lc-label">Mass (kg) <span id="rf-mass-v" class="lc-val">2400</span></div>
+            <input type="range" class="lc-input" id="rf-mass" min="100" max="200000" value="2400" step="100"></div>
+          <div><div class="lc-label">Atmo Interface (km) <span id="rf-alt-v" class="lc-val">400</span></div>
+            <input type="range" class="lc-input" id="rf-alt" min="150" max="600" value="400" step="5"></div>
+       </div>
+       <div style="display:flex;gap:.4rem; margin-top:1rem;">
+          <button class="lab-btn" id="rf-btn-sim" style="font-size:.6rem">▶ SIMULATE BURN</button>
+          <button class="lab-btn secondary" id="rf-btn-reset" style="font-size:.6rem">⟳</button>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">STATUS</div><div class="hud-val" id="rf-status">AWAITING</div></div>
+          <div class="hud-row"><div class="hud-label">ALTITUDE</div><div class="hud-val" id="rf-r-alt">—</div></div>
+          <div class="hud-row"><div class="hud-label">HEATING</div><div class="hud-val" style="color:#FF4400" id="rf-r-heat">—</div></div>
+          <div class="hud-row"><div class="hud-label">SURVIVES?</div><div class="hud-val" id="rf-r-surv">—</div></div>
+       </div>
+    </div>
+    
+    <!-- DELTA-V PLANNER -->
+    <div class="tac-section" data-scene="scene-dv" id="sec-dv">
+       <span class="tac-st">// MISSION DESIGN</span>
+       <h2 class="tac-sn">DELTA-V PLANNER</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+          <div><div class="lc-label">Origin Orbit</div>
             <select class="lc-select" id="dv-from">
               <option value="leo">Low Earth Orbit (LEO)</option>
               <option value="geo">Geostationary (GEO)</option>
@@ -408,426 +201,200 @@
               <option value="geo">Geostationary (GEO)</option>
               <option value="moon">Lunar orbit</option>
               <option value="mars">Mars orbit</option>
-              <option value="jupiter">Jupiter orbit</option>
             </select></div>
-          <div><div class="lc-label">Mass (kg) <span id="dv-mass-v" class="lc-val">1000</span></div>
+          <div><div class="lc-label">Payload Mass (kg) <span id="dv-mass-v" class="lc-val">1000</span></div>
             <input type="range" class="lc-input" id="dv-mass" min="100" max="50000" value="1000" step="100"></div>
-          <div id="dv-budget" class="dv-budget"></div>
-          <div class="lab-readout" style="grid-template-columns:repeat(2,1fr);gap:.4rem">
-            <div class="lr-item"><div class="lr-label">Total Δv</div><div class="lr-val" id="dv-total">—</div></div>
-            <div class="lr-item"><div class="lr-label">Propellant</div><div class="lr-val" id="dv-fuel">—</div></div>
-          </div>
-        </div>
-        <div class="lab-cv-wrap" style="min-height:200px"><canvas id="dv-cv"></canvas></div>
-      </div>
+       </div>
+       <div id="dv-budget" class="dv-budget" style="margin-top:1rem;"></div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">TOTAL Δv</div><div class="hud-val hud-cyan" id="dv-total">—</div></div>
+          <div class="hud-row"><div class="hud-label">PROPELLANT</div><div class="hud-val hud-amber" id="dv-fuel">—</div></div>
+       </div>
     </div>
-
-    <!-- D4: Debris Field -->
-    <div class="bcard bcard-d4" id="debris-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// SIMULATION</span>
-        <span class="bcard-title">💥 DEBRIS FIELD</span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div class="lab-cv-wrap" style="min-height:220px;margin-bottom:.6rem"><canvas id="df-cv"></canvas></div>
-        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:.6rem">
+    
+    <!-- DEBRIS FIELD -->
+    <div class="tac-section" data-scene="scene-df" id="sec-df">
+       <span class="tac-st">// KESSLER SYNDROME</span>
+       <h2 class="tac-sn">DEBRIS FIELD</h2>
+       <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:1rem; margin-bottom:1.5rem;">
           <select class="lc-select" id="df-shell" style="width:130px;font-size:.6rem">
-            <option value="leo">LEO (200–2000 km)</option>
+            <option value="leo">LEO (200-2000km)</option>
             <option value="meo">MEO</option>
             <option value="geo">GEO</option>
           </select>
-          <button class="lab-btn" id="df-btn-add" style="font-size:.58rem">+ ADD 10</button>
-          <button class="lab-btn danger" id="df-btn-casc" style="font-size:.58rem">⚠ CASCADE</button>
-          <button class="lab-btn secondary" id="df-btn-reset" style="font-size:.58rem">⟳</button>
-        </div>
-        <div class="lab-readout" style="grid-template-columns:repeat(2,1fr);gap:.4rem">
-          <div class="lr-item"><div class="lr-label">Objects</div><div class="lr-val" id="df-count">0</div></div>
-          <div class="lr-item"><div class="lr-label">Status</div><div class="lr-val" id="df-status">STABLE</div></div>
-        </div>
-        <div class="kessler-warn" id="df-kessler">⚠ KESSLER CASCADE</div>
-      </div>
+          <button class="lab-btn" id="df-btn-add" style="font-size:.6rem">+ ADD 10</button>
+          <button class="lab-btn danger" id="df-btn-casc" style="font-size:.6rem">⚠ CASCADE</button>
+          <button class="lab-btn secondary" id="df-btn-reset" style="font-size:.6rem">⟳</button>
+       </div>
+       <div class="hud-panel">
+          <div class="hud-row"><div class="hud-label">OBJECTS</div><div class="hud-val" id="df-count">0</div></div>
+          <div class="hud-row"><div class="hud-label">STATUS</div><div class="hud-val hud-green" id="df-status">STABLE</div></div>
+       </div>
+       <div class="kessler-warn" id="df-kessler" style="display:none; color:#FF4444; font-weight:bold; margin-top:1rem;">⚠ KESSLER CASCADE</div>
     </div>
 
-    <!-- ROW E: Intel -->
-    <div class="bento-row-label">ROW E · INTEL</div>
+    <!-- TLE DECODER -->
+    <div class="tac-section" data-scene="scene-tle" id="sec-tle">
+       <span class="tac-st">// ORBITAL DATA</span>
+       <h2 class="tac-sn">TLE DECODER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Paste a Two-Line Element set to decode orbital parameters.</p>
+       <textarea id="tle-input" placeholder="Paste TLE here..." style="width:100%;height:100px;background:rgba(0,0,0,0.5);border:1px solid var(--bd);color:var(--c);font-family:var(--mono);font-size:.6rem;padding:.6rem;outline:none;resize:vertical;line-height:1.6;margin-top:1rem;"></textarea>
+       <div style="display:flex;gap:.5rem;margin-top:0.8rem;margin-bottom:1.5rem;">
+          <button class="btn" id="tle-decode-btn" style="font-size:.6rem;padding:.4rem .8rem">⬡ DECODE</button>
+          <button class="btn secondary" id="tle-iss-btn" style="font-size:.6rem;padding:.4rem .8rem">📡 LOAD ISS</button>
+       </div>
+       <div id="tle-output" style="background:rgba(0,0,0,0.5);border:1px solid var(--bd);padding:1rem;font-size:0.65rem;font-family:var(--mono);"></div>
+    </div>
 
-    <!-- E1: Starlink Density -->
-    <div class="bcard bcard-e1" id="sl-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// MEGACONSTELLATION</span>
-        <span class="bcard-title">STARLINK <span style="color:var(--r)">DENSITY</span></span>
-        <span class="bcard-live"><span class="live-dot" style="background:var(--r)"></span><span id="sl-count-meta">LOADING...</span></span>
-      </div>
-      <div class="bcard-body" style="padding:0;overflow:hidden">
-        <div style="position:relative;background:#01020A;overflow:hidden;height:260px">
-          <canvas id="sl-cv" style="display:block;width:100%;height:100%"></canvas>
-          <div style="position:absolute;top:8px;left:10px;font-size:.55rem;color:var(--r);letter-spacing:.15em">STARLINK 3D · LEO SHELLS</div>
-          <div id="sl-legend-3d" style="position:absolute;bottom:8px;left:10px;display:flex;flex-direction:column;gap:.3rem;font-size:.52rem"></div>
-        </div>
-        <div style="padding:.7rem">
-          <div class="lab-readout" style="grid-template-columns:repeat(4,1fr);gap:.4rem">
-            <div class="lr-item"><div class="lr-label">Total Sats</div><div class="lr-val" id="sl-total">—</div></div>
-            <div class="lr-item"><div class="lr-label">Active Shells</div><div class="lr-val green" id="sl-active">6</div></div>
-            <div class="lr-item"><div class="lr-label">Orb. Planes</div><div class="lr-val" id="sl-planes">72+</div></div>
-            <div class="lr-item"><div class="lr-label">Kessler Risk</div><div class="lr-val warn" id="sl-risk">ELEVATED</div></div>
+    <!-- $VOID TOKEN -->
+    <div class="tac-section" data-scene="scene-blank" id="sec-void">
+       <span class="tac-st">// BLOCKCHAIN ORACLE</span>
+       <h2 class="tac-sn">$VOID API</h2>
+       <div id="void-config" style="background:rgba(255,200,87,0.1);border:1px solid rgba(255,200,87,.3);padding:1.2rem;margin-top:1rem;display:flex;flex-direction:column;gap:1rem;border-radius:4px">
+          <div>
+            <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">BAGS API KEY</div>
+            <input id="bags-api-key" type="password" placeholder="bags_live_..." style="width:100%;border:1px solid var(--bd);padding:.5rem;background:#000;color:#fff;">
           </div>
+          <div>
+            <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">$VOID MINT</div>
+            <input id="void-mint" type="text" placeholder="Mint..." style="width:100%;border:1px solid var(--bd);padding:.5rem;background:#000;color:#fff;">
+          </div>
+          <button class="btn btn-a" onclick="voidConnect()" style="font-size:0.65rem;">⬡ CONNECT</button>
+          <span id="void-conn-status" style="font-size:.6rem;color:var(--dim);"></span>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;" id="vbox-price">
+          <div class="hud-row"><div class="hud-label">PRICE (SOL)</div><div class="hud-val" style="color:var(--a)" id="v-price">—</div></div>
+          <div class="hud-row"><div class="hud-label">MARKET CAP</div><div class="hud-val hud-green" id="v-mcap">—</div></div>
+          <div class="hud-row"><div class="hud-label">FEES</div><div class="hud-val hud-cyan" id="v-fees">—</div></div>
+       </div>
+    </div>
+
+  </div> <!-- /left-pane -->
+
+
+  <!-- RIGHT PANE: 3D VIEWPORT -->
+  <div id="right-pane">
+    <div class="scene-container active" id="scene-iss3d-canvas"><canvas id="iss3d-cv"></canvas></div>
+    <div class="scene-container" id="scene-jwst">
+        <canvas id="jwst-cv"></canvas>
+        <div class="scene-overlay mt-cam-btns">
+            <button class="btn" id="jwst-cam-system" style="padding:.5rem 1rem;font-size:.65rem">🌍 SYSTEM</button>
+            <button class="btn" id="jwst-cam-follow" style="padding:.5rem 1rem;font-size:.65rem">🔭 JWST</button>
+            <button class="btn" id="jwst-cam-overview" style="padding:.5rem 1rem;font-size:.65rem">⬆ TOP</button>
         </div>
-      </div>
     </div>
-
-    <!-- E2: Exoplanet Transits -->
-    <div class="bcard bcard-e2" id="et-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// OTHER WORLDS</span>
-        <span class="bcard-title">EXOPLANET <span style="color:var(--p)">TRANSITS</span></span>
-        <span class="bcard-sub">NEXT 8 TRANSITS</span>
-      </div>
-      <div class="bcard-body" style="padding:.7rem">
-        <div class="et-grid" id="et-grid">
-          <div style="font-size:.65rem;color:var(--dim);text-align:center;padding:1.5rem">⬡ COMPUTING TRANSIT WINDOWS...</div>
+    <div class="scene-container" id="scene-orrery"><canvas id="orr-cv"></canvas></div>
+    <div class="scene-container" id="scene-mt-canvas"><canvas id="mt-cv"></canvas></div>
+    <div class="scene-container" id="scene-sl"><canvas id="sl-cv"></canvas></div>
+    <div class="scene-container" id="scene-os"><canvas id="os-cv"></canvas></div>
+    <div class="scene-container" id="scene-rf"><canvas id="rf-cv"></canvas></div>
+    <div class="scene-container" id="scene-dv"><canvas id="dv-cv"></canvas></div>
+    <div class="scene-container" id="scene-df"><canvas id="df-cv"></canvas></div>
+    <div class="scene-container" id="scene-tle"><canvas id="tle-cv"></canvas></div>
+    <div class="scene-container" id="scene-blank">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#112233;font-size:3rem;font-family:var(--mono);">
+            NO FEED SIGNAL
         </div>
-        <p style="font-size:.6rem;color:var(--dim);margin-top:.7rem;line-height:1.6">When an exoplanet crosses its star, the star dims by a tiny fraction detectable from Earth.</p>
-      </div>
     </div>
+  </div> <!-- /right-pane -->
 
-    <!-- E3: Apophis Countdown -->
-    <div class="bcard bcard-e3" id="apophis-s">
-      <div class="bcard-header">
-        <span class="bcard-tag">// INCOMING</span>
-        <span class="bcard-title">APOPHIS <span style="color:var(--o)">2029</span></span>
-        <span class="bcard-sub">T-MINUS</span>
-      </div>
-      <div class="bcard-body">
-        <div style="font-size:.65rem;color:var(--dim);line-height:1.7;margin-bottom:.8rem">On <strong style="color:#fff">April 13, 2029</strong>, asteroid Apophis (370m wide) will pass Earth at <strong style="color:var(--o)">31,000 km</strong> — closer than GPS satellites. 3 billion people will see it with the naked eye.</div>
-        <div class="apophis-bar" id="apophis-bar">
-          <div class="ap-pulse"></div>
-          <div><div class="ap-label">DAYS</div><div class="ap-val" id="ap-d">—</div></div>
-          <div class="ap-sep"></div>
-          <div><div class="ap-label">HOURS</div><div class="ap-val" id="ap-h">—</div></div>
-          <div class="ap-sep"></div>
-          <div><div class="ap-label">MINS</div><div class="ap-val" id="ap-m">—</div></div>
-          <div class="ap-sep"></div>
-          <div><div class="ap-label">SECS</div><div class="ap-val" id="ap-s">—</div></div>
-        </div>
-        <div style="margin-top:.8rem">
-          <a href="https://twitter.com/intent/tweet?text=In%20April%202029%2C%20asteroid%20Apophis%20will%20pass%20INSIDE%20the%20GPS%20satellite%20ring.%20%40VoidSignal%20%23Apophis" target="_blank" class="share-btn">𝕏 SHARE THIS FACT</a>
-        </div>
-
-        <!-- JWST Observatory mini-section inside this card replaced by separate card below -->
-        <div style="margin-top:1.2rem;border-top:1px solid var(--bd);padding-top:1rem">
-          <div style="font-size:.55rem;color:var(--c);letter-spacing:.2em;margin-bottom:.5rem">// JWST OBSERVATORY</div>
-          <div style="font-size:.62rem;color:var(--dim);line-height:1.6">JWST orbits the L2 Lagrange point 1.5M km from Earth, always shielded from solar radiation.</div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /bento-grid -->
-</div><!-- /bento-outer -->
-
-<!-- JWST Section (full-width, between grid and terminal) -->
-<section id="jwst-s" style="position:relative;width:100%;border-top:1px solid var(--bd);background:#020512;overflow:hidden">
-  <div class="wrap">
-    <div class="sh">
-      <span class="st">// INNER SOLAR SYSTEM · L1–L5 OBSERVATORY</span>
-      <h2 class="sn">JWST <span style="color:var(--p)">OBSERVATORY</span></h2>
-      <div class="sl"></div>
-      <span class="smeta">SUN · MERCURY · VENUS · EARTH+MOON · L1–L5 · JWST · PARKER PROBE</span>
-    </div>
-  </div>
-  <canvas id="jwst-cv" style="display:block;width:100%;height:700px;touch-action:none"></canvas>
-  <div style="position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:12px;z-index:10">
-    <button class="gi" id="jwst-cam-system" style="pointer-events:auto;padding:.5rem 1rem;font-size:.65rem">🌍 FULL SYSTEM</button>
-    <button class="gi" id="jwst-cam-follow" style="pointer-events:auto;padding:.5rem 1rem;font-size:.65rem">🔭 ZOOM JWST</button>
-    <button class="gi" id="jwst-cam-overview" style="pointer-events:auto;padding:.5rem 1rem;font-size:.65rem">⬆ TOP VIEW</button>
-  </div>
-  <div style="position:absolute;top:5rem;left:2rem;pointer-events:none;max-width:280px">
-    <div id="jwst-lagrange-info" style="background:rgba(17,24,39,0.75);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem;font-size:.62rem;color:var(--dim);line-height:1.7">
-      <div style="color:var(--p);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem">⬡ LAGRANGE POINTS</div>
-      <div><span style="color:#00FF9F">L1</span> · Sun-Earth line, sunward 1.5M km · SOHO, DSCOVR</div>
-      <div><span style="color:#8B5CF6">L2</span> · Anti-sun, 1.5M km · JWST, Euclid, Herschel</div>
-      <div><span style="color:#FF6B35">L3</span> · Opposite Earth through Sun · Unstable</div>
-      <div><span style="color:#FFC857">L4/L5</span> · 60° ahead/behind · Trojan Asteroids</div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ⑧ TLE DECODER — Educational orbital mechanics tool -->
-<div class="wrap" id="tle-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// ORBITAL MECHANICS</span>
-    <h2 class="sn">TLE <span style="color:var(--c)">DECODER</span></h2>
-    <div class="sl"></div>
-    <span class="smeta">TWO-LINE ELEMENT SET · HUMAN-READABLE BREAKDOWN</span>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
-    <div>
-      <p style="font-size:.68rem;color:var(--dim);line-height:1.8;margin-bottom:1rem">
-        A Two-Line Element set (TLE) is the universal format used by NORAD and NASA to describe where any satellite is in orbit. Paste any TLE below to get a complete human-readable breakdown.
-      </p>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:.8rem;margin-bottom:.8rem">
-        <div style="font-size:.52rem;color:var(--c);letter-spacing:.2em;margin-bottom:.5rem">// PASTE TLE BELOW</div>
-        <textarea id="tle-input" placeholder="ISS (ZARYA)&#10;1 25544U 98067A   24001.50000000  .00020000  00000-0  36000-3 0  9990&#10;2 25544  51.6421 210.4235 0001234  75.2345 284.9055 15.50037600000000" style="width:100%;height:120px;background:var(--bg);border:1px solid var(--bd);color:var(--c);font-family:var(--mono);font-size:.65rem;padding:.6rem;outline:none;resize:vertical;line-height:1.6"></textarea>
-      </div>
-      <div style="display:flex;gap:.8rem;margin-bottom:1rem">
-        <button class="btn" id="tle-decode-btn" style="font-size:.65rem;padding:.5rem 1.2rem">⬡ DECODE TLE</button>
-        <button class="btn secondary" id="tle-iss-btn" style="font-size:.65rem;padding:.5rem 1rem">📡 LOAD ISS</button>
-        <button class="btn secondary" id="tle-hubble-btn" style="font-size:.65rem;padding:.5rem 1rem">🔭 HUBBLE</button>
-      </div>
-      <canvas id="tle-cv" style="display:block;width:100%;height:200px;background:#01020A;border:1px solid var(--bd)"></canvas>
-    </div>
-    <div id="tle-output" style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;min-height:300px">
-      <div style="font-size:.6rem;color:var(--dim);text-align:center;padding:3rem 1rem;letter-spacing:.15em">⬡ PASTE A TLE AND CLICK DECODE</div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ⑨ COST PER KG TO ORBIT — Historical animated chart -->
-<div class="wrap" id="cost-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// LAUNCH ECONOMICS</span>
-    <h2 class="sn">COST TO <span style="color:var(--g)">ORBIT</span></h2>
-    <div class="sl"></div>
-    <span class="smeta">1957–2030 · $/KG TO LEO · REUSABILITY REVOLUTION</span>
-  </div>
-  <div style="position:relative">
-    <canvas id="cost-cv" style="display:block;width:100%;height:420px;background:#01020A;border:1px solid var(--bd)"></canvas>
-    <div id="cost-tooltip" style="display:none;position:absolute;background:rgba(3,6,18,.95);border:1px solid var(--bd);padding:.7rem 1rem;font-size:.6rem;pointer-events:none;border-left:2px solid var(--g);backdrop-filter:blur(12px)"></div>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.4rem">
-    <div style="background:var(--bg1);border:1px solid var(--bd);padding:1rem;border-left:2px solid #888888">
-      <div style="font-size:.52rem;color:var(--dim);letter-spacing:.2em;margin-bottom:.3rem">SATURN V (1969)</div>
-      <div style="font-family:var(--head);font-size:1.1rem;color:#BBBBBB">$54,000</div>
-      <div style="font-size:.52rem;color:var(--dim)">/kg to LEO</div>
-    </div>
-    <div style="background:var(--bg1);border:1px solid var(--bd);padding:1rem;border-left:2px solid #CC4444">
-      <div style="font-size:.52rem;color:var(--dim);letter-spacing:.2em;margin-bottom:.3rem">SPACE SHUTTLE (1981)</div>
-      <div style="font-family:var(--head);font-size:1.1rem;color:#CC7777">$65,000</div>
-      <div style="font-size:.52rem;color:var(--dim)">/kg to LEO</div>
-    </div>
-    <div style="background:var(--bg1);border:1px solid var(--bd);padding:1rem;border-left:2px solid var(--c)">
-      <div style="font-size:.52rem;color:var(--dim);letter-spacing:.2em;margin-bottom:.3rem">FALCON 9 REUSE</div>
-      <div style="font-family:var(--head);font-size:1.1rem;color:var(--c)">$2,700</div>
-      <div style="font-size:.52rem;color:var(--dim)">/kg to LEO</div>
-    </div>
-    <div style="background:var(--bg1);border:1px solid var(--bd);padding:1rem;border-left:2px solid var(--g)">
-      <div style="font-size:.52rem;color:var(--dim);letter-spacing:.2em;margin-bottom:.3rem">STARSHIP TARGET</div>
-      <div style="font-family:var(--head);font-size:1.1rem;color:var(--g)">$100</div>
-      <div style="font-size:.52rem;color:var(--dim)">/kg to LEO · projected</div>
-    </div>
-  </div>
-  <p style="font-size:.66rem;color:var(--dim);line-height:1.85;margin-top:1.2rem;max-width:820px">
-    At Starship's target price of <strong style="color:var(--g)">$100/kg</strong>, sending a human to orbit (average mass 80 kg) costs <strong style="color:var(--g)">$8,000</strong> — less than a business class flight to Tokyo. The inflection point with reusability is the most dramatic cost reduction in the history of transportation.
-  </p>
-</div>
-
-
-<!-- ⑩ ASTRONAUT BIOMEDICAL TIMELINE -->
-<div class="wrap" id="bio-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// HUMAN SPACEFLIGHT</span>
-    <h2 class="sn">ASTRONAUT <span style="color:var(--r)">BIOMEDICAL</span></h2>
-    <div class="sl"></div>
-    <span class="smeta">WHAT SPACE DOES TO THE HUMAN BODY · MARS MISSION RISK</span>
-  </div>
-  <div style="position:relative">
-    <div id="bio-timeline" style="position:relative;overflow:hidden">
-      <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--bd);transform:translateX(-50%)"></div>
-      <!-- Events populated by JS -->
-    </div>
-    <div style="display:flex;justify-content:center;gap:1rem;margin-top:2rem">
-      <button class="btn" id="bio-play-btn" style="font-size:.65rem;padding:.5rem 1.4rem">▶ ANIMATE TIMELINE</button>
-      <button class="btn secondary" id="bio-reset-btn" style="font-size:.65rem;padding:.5rem 1rem">⟳ RESET</button>
-    </div>
-    <p style="font-size:.64rem;color:var(--dim);line-height:1.85;margin-top:1.2rem;max-width:820px">
-      A Mars mission takes <strong style="color:var(--r)">6–9 months</strong> each way. Astronauts returning from the ISS after 6 months show measurable bone density loss, vision degradation from intracranial pressure, and reduced immune function. These are real risks to real people — not science fiction.
-    </p>
-  </div>
-</div>
-
-
-<!-- ④ VOID-AI TERMINAL -->
-<div class="terminal-strip" id="terminal-s">
-  <div class="wrap">
-    <div class="sh">
-      <span class="st">// AI INTERFACE</span>
-      <h2 class="sn">VOID-AI <span style="color:var(--c);font-size:.7rem">// TERMINAL</span></h2>
-      <div class="sl"></div>
-      <span class="smeta">CLAUDE-POWERED · SPACE INTELLIGENCE AGENT</span>
-    </div>
-    <div class="term-wrap">
-      <div class="term-hd">
+  <!-- FLOATING AI TERMINAL -->
+  <div id="ai-terminal-float">
+      <div class="term-hd" style="background:rgba(2,4,10,0.9); border-bottom:1px solid rgba(0,212,255,0.4); padding: 0.6rem 1rem;">
         <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
         <span style="font-size:.58rem;color:var(--dim);margin-left:.5rem">AI ENGINE:</span>
         <span style="font-size:.58rem;color:var(--g);margin-left:.3rem" id="ai-status">⬡ STANDBY</span>
-        <span class="tlab">VOIDSIGNAL TERMINAL v10.0 // CLAUDE UPLINK</span>
+        <button id="ai-close-btn" style="float:right; background:none; border:none; color:var(--dim); cursor:pointer;">✕</button>
       </div>
-      <div class="term-out" id="to"></div>
-      <div class="term-ir">
+      <div class="term-out" id="to" style="max-height: 300px; height: 300px; padding: 1rem;"></div>
+      <div class="term-ir" style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.05); background:#000;">
         <span class="tip">void@signal:~$</span>
-        <input id="ti" type="text" placeholder="ask anything about space, physics, satellites..." autocomplete="off" spellcheck="false">
+        <input id="ti" type="text" placeholder="ask the oracle..." autocomplete="off" spellcheck="false" style="font-size:0.75rem;">
       </div>
-    </div>
   </div>
-</div>
+  <button class="term-toggle-btn" id="ai-toggle-btn">⬡</button>
 
-<!-- ⑤ LIVE FEEDS ROW -->
-<div class="wrap" id="feeds-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// LIVE INTEL</span>
-    <h2 class="sn">LIVE <span style="color:var(--g)">FEEDS</span></h2>
-    <div class="sl"></div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.4rem">
-    <!-- News -->
-    <div>
-      <div style="font-size:.58rem;color:var(--c);letter-spacing:.2em;margin-bottom:.8rem">// SPACE NEWS</div>
-      <div class="news-g" id="news-g" style="grid-template-columns:1fr">
-        <div class="nc-load">⬡ CONNECTING TO UPLINK...</div>
-      </div>
-    </div>
-    <!-- Upcoming Launches -->
-    <div>
-      <div style="font-size:.58rem;color:var(--a);letter-spacing:.2em;margin-bottom:.8rem">// UPCOMING LAUNCHES</div>
-      <div id="lg" class="news-g" style="grid-template-columns:1fr"></div>
-    </div>
-    <!-- Today in Space -->
-    <div>
-      <div style="font-size:.58rem;color:var(--g);letter-spacing:.2em;margin-bottom:.8rem">// TODAY IN SPACE</div>
-      <div class="today-box" id="today-box"></div>
-    </div>
-  </div>
-</div>
+  <!-- BACKGROUND ELEMENTS NEEDED FOR COMPATIBILITY -->
+  <div style="display:none;" id="epitaphs-s"><div id="ep-grid"></div><div id="fg"></div></div>
+  <div style="display:none;" id="dsn-s"><div id="dsn-ts"></div><div id="dsn-grid"></div><div id="dsn-contacts"></div></div>
+  <div style="display:none;" id="feeds-s"><div id="news-g"></div><div id="lg"></div><div id="today-box"></div></div>
+  <div style="display:none;" id="cost-cv"></div><div style="display:none;" id="cost-tooltip"></div>
+  <div style="display:none;" id="bio-timeline"></div><button style="display:none;" id="bio-play-btn"></button><button style="display:none;" id="bio-reset-btn"></button>
+  <div style="display:none" id="void-last-update"></div>
 
-<!-- ⑥ $VOID TOKEN SECTION -->
-<div class="wrap" id="void-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// THE TOKEN</span>
-    <h2 class="sn">LAUNCH <span style="color:var(--a)">$VOID</span></h2>
-    <div class="sl"></div>
-    <span class="smeta" id="void-last-update">BAGS API · LIVE DATA</span>
-  </div>
+  <!-- SCRIPT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="main.js"></script>
+  
+  <!-- SCENE CONTROLLER -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // AI Terminal Toggle
+        const term = document.getElementById('ai-terminal-float');
+        const btn = document.getElementById('ai-toggle-btn');
+        const closeBtn = document.getElementById('ai-close-btn');
+        
+        btn.addEventListener('click', () => {
+            term.classList.add('open');
+            btn.classList.add('hidden');
+            document.getElementById('ti').focus();
+        });
+        closeBtn.addEventListener('click', () => {
+            term.classList.remove('open');
+            btn.classList.remove('hidden');
+        });
+        
+        // Scene Switcher Logic
+        const sections = document.querySelectorAll('.tac-section');
+        const containers = document.querySelectorAll('.scene-container');
+        
+        function switchScene(sceneId) {
+            // Update canvases
+            containers.forEach(c => {
+                c.classList.remove('active');
+            });
+            const tg = sceneId;
+            // Handle slight id mismatches
+            let targetCanvas = document.getElementById(tg);
+            if(!targetCanvas && document.getElementById(tg+'-canvas')) {
+                targetCanvas = document.getElementById(tg+'-canvas');
+            }
+            if(targetCanvas) targetCanvas.classList.add('active');
+            
+            // Force resize trigger for active canvas to ensure it fills
+            window.dispatchEvent(new Event('resize'));
+        }
 
-  <!-- Config Panel -->
-  <div id="void-config" style="background:var(--bg1);border:1px solid rgba(255,200,87,.3);padding:1.2rem;margin-bottom:2rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;border-radius:12px">
-    <div style="flex:1;min-width:200px">
-      <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">BAGS API KEY <a href="https://dev.bags.fm" target="_blank" style="color:var(--c);text-decoration:none">↗ GET KEY</a></div>
-      <input id="bags-api-key" type="password" placeholder="bags_live_..." style="width:100%;background:var(--bg);border:1px solid var(--bd);padding:.5rem .8rem;color:#fff;font-family:var(--mono);font-size:.7rem;outline:none;border-radius:6px">
-    </div>
-    <div style="flex:1;min-width:200px">
-      <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">$VOID TOKEN MINT ADDRESS</div>
-      <input id="void-mint" type="text" placeholder="Solana token mint (Base58)..." style="width:100%;background:var(--bg);border:1px solid var(--bd);padding:.5rem .8rem;color:#fff;font-family:var(--mono);font-size:.7rem;outline:none;border-radius:6px">
-    </div>
-    <button class="btn btn-a" onclick="voidConnect()" style="white-space:nowrap;padding:.5rem 1.2rem">⬡ CONNECT LIVE DATA</button>
-    <span id="void-conn-status" style="font-size:.6rem;color:var(--dim);letter-spacing:.1em;align-self:center"></span>
-  </div>
+        // Intersection Observer to switch scenes as user scrolls left pane
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    // entry.target is the section
+                    sections.forEach(s => s.classList.remove('active-focus'));
+                    entry.target.classList.add('active-focus');
+                    const sceneId = entry.target.getAttribute('data-scene');
+                    switchScene(sceneId);
+                }
+            });
+        }, {
+            root: document.getElementById('left-pane'),
+            rootMargin: "-45% 0px -45% 0px",
+            threshold: 0
+        });
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start">
-    <div>
-      <p style="font-family:var(--head);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--a);text-shadow:0 0 30px rgba(255,200,87,.4);margin-bottom:1rem;line-height:1">$VOID</p>
-      <p style="font-size:.78rem;color:var(--dim);line-height:2;margin-bottom:1.6rem">
-        Every dead satellite still orbiting is a ghost — a signal from the void.<br><br>
-        Launched by a real aerospace student with actual orbital mechanics knowledge and a concerning amount of student debt. Not a trader. Not an influencer. Someone who debugs FEM meshes at 2am and also launched a token.<br><br>
-        The physics is real. The apogee is the goal.
-      </p>
-      <div style="display:flex;gap:.8rem;flex-wrap:wrap">
-        <a href="https://bags.fm" target="_blank" class="btn btn-a">BUY $VOID ON BAGS ↗</a>
-        <a href="https://twitter.com/VoidSignal" target="_blank" class="btn">@VøidSignal ↗</a>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px" id="vbox-price">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">PRICE (SOL)</div>
-        <div style="font-family:var(--head);font-size:1.1rem;color:var(--a)" id="v-price">—</div>
-        <div style="font-size:.55rem;color:var(--dim);margin-top:.2rem" id="v-price-usd"></div>
-      </div>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px" id="vbox-mcap">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">MARKET CAP</div>
-        <div style="font-family:var(--head);font-size:1.1rem;color:var(--g)" id="v-mcap">—</div>
-      </div>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">PLATFORM</div>
-        <div style="font-family:var(--head);font-size:.82rem;color:var(--g)">BagsApp<br>~0% Fee</div>
-      </div>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px" id="vbox-fees">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">LIFETIME FEES</div>
-        <div style="font-family:var(--head);font-size:1.1rem;color:var(--c)" id="v-fees">—</div>
-      </div>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">TICKER</div>
-        <div style="font-family:var(--head);font-size:1.4rem;color:var(--a)">$VOID</div>
-      </div>
-      <div style="background:var(--bg1);border:1px solid var(--bd);padding:1.2rem;border-radius:12px">
-        <div style="font-size:.55rem;letter-spacing:.25em;color:var(--dim);margin-bottom:.5rem">DATA SOURCE</div>
-        <div style="font-family:var(--head);font-size:.75rem;color:var(--g)">Bags API<br>+ Celestrak TLE</div>
-      </div>
-    </div>
-  </div>
-</div>
+        sections.forEach(s => {
+            observer.observe(s);
+            // Also allow clicking to focus
+            s.addEventListener('click', () => {
+                s.scrollIntoView({behavior: 'smooth', block: 'center'});
+            });
+        });
 
-<!-- ⑦ FOOTER -->
-<footer>
-  <div class="ft-logo">VøIDSIGNAL</div>
-  <div class="ft-l">
-    <a href="https://twitter.com/VoidSignal" target="_blank">@VOIDSIGNAL</a>
-    <a href="#feeds-s">NEWS</a>
-    <a href="#terminal-s">TERMINAL</a>
-    <a href="#orrery-s" style="color:var(--c)">ORRERY</a>
-    <a href="#jwst-s" style="color:var(--p)">JWST</a>
-    <a href="#lab-s" style="color:var(--c)">LAB</a>
-    <a href="#void-s" style="color:var(--a)">$VOID</a>
-    <a href="https://bags.fm" target="_blank" style="color:var(--a)">BAGS APP ↗</a>
-  </div>
-  <p class="ft-cp">Real orbital data. Real physics. Real aerospace engineering. // 2025</p>
-  <p style="font-size:.52rem;color:var(--dim);margin-top:.4rem;opacity:.4" id="worker-status"></p>
-</footer>
-
-<!-- Keep legacy lab section IDs for main.js compatibility -->
-<div style="display:none" id="lab-s">
-  <div id="lab-t1" class="lab-p on"></div>
-  <div id="lab-t2" class="lab-p"></div>
-  <div id="lab-t3" class="lab-p"></div>
-  <div id="lab-t4" class="lab-p"></div>
-  <div id="lab-t5" class="lab-p"></div>
-  <div id="lab-t6" class="lab-p"></div>
-  <div id="lab-t7" class="lab-p"></div>
-</div>
-<div style="display:none" id="explore-s">
-  <div id="tab-planets" class="tab-p on"><div class="obj-g" id="pg"></div></div>
-  <div id="tab-asteroids" class="tab-p"><div class="obj-g" id="ag"></div></div>
-  <div id="tab-deepspace" class="tab-p"><div class="obj-g" id="dg"></div></div>
-  <div id="tab-genesis" class="tab-p"><div class="sat-g" id="gg"></div></div>
-  <div id="tab-forgotten" class="tab-p"><div class="sat-g" id="fg" style="display:block"></div></div>
-  <div id="tab-reentry" class="tab-p"><div class="sat-g" id="rg"></div></div>
-  <div id="tab-launches" class="tab-p"><div class="news-g" id="lg" style="display:block"></div></div>
-</div>
-<div style="display:none">
-  <div id="mc-pass-status"></div>
-  <div id="mc-passes-grid"></div>
-  <div id="mc-passes-fallback"></div>
-  <div id="mc-location-info"></div>
-  <button id="mc-loc-btn"></button>
-  <div id="mc-vis"></div><div id="mc-day"></div><div id="mc-km-total"></div>
-  <span id="news-ts"></span>
-  <div id="fm-t"></div>
-  <div id="orr-ticker"></div>
-  <div id="quiz-s"></div>
-  <canvas id="ap-cv"></canvas><canvas id="et-cv"></canvas><canvas id="et-graph-cv"></canvas>
-  <div id="rf-r-vel"></div><div id="rf-r-q"></div><div id="rf-r-bc"></div>
-  <input id="rf-area"><input id="rf-cd">
-  <span id="rf-area-v"></span><span id="rf-cd-v"></span>
-  <input id="os-raan"><input id="os-aop"><input id="os-ta">
-  <span id="os-raan-v"></span><span id="os-aop-v"></span><span id="os-ta-v"></span>
-  <span id="os-peri"></span><span id="os-apo"></span>
-  <input id="dv-isp"><span id="dv-isp-v"></span><div id="dv-ttime"></div>
-  <div id="mt-narr-btn" style="display:none"></div>
-  <span id="mt-scale"></span>
-  <div id="sw-radio"></div><div id="sw-alert-count"></div>
-  <canvas id="mc-map-canvas"></canvas>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="main.js"></script>
+        // Trigger on load
+        setTimeout(() => {
+          switchScene('scene-iss3d-canvas');
+        }, 500);
+    });
+  </script>
 </body>
 </html>
