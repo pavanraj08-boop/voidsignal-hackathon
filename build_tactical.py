@@ -1,0 +1,408 @@
+import re
+
+def build_index():
+    html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VøidSignal | Tactical Command</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="modern-theme.css">
+<link rel="stylesheet" href="command-center.css">
+</head>
+<body>
+
+  <!-- LEFT PANE: DATA & CONTROLS -->
+  <div id="left-pane">
+    <div style="padding: 2.5rem 2rem 1.5rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; background: rgba(2, 4, 10, 0.95); z-index: 20; backdrop-filter: blur(12px);">
+      <h1 style="font-family: var(--head); font-weight: 900; margin: 0; font-size: 2.5rem; color: #fff; letter-spacing:-0.03em;">VøID<span style="color:var(--c)">SIGNAL</span></h1>
+      <div style="font-size: 0.65rem; color: var(--dim); letter-spacing: 0.25em; margin-top: 0.2rem;">AUTONOMOUS AEROSPACE INTELLIGENCE</div>
+      <div style="display: flex; gap: 1rem; margin-top: 1.2rem;">
+        <div style="font-size: 0.65rem; color: var(--g);"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g);margin-right:4px;box-shadow:0 0 5px var(--g);"></span>UPLINK SECURE</div>
+        <div style="font-size: 0.65rem; color: var(--a);" id="tb-void-price">$VOID: —</div>
+      </div>
+    </div>
+
+    <!-- ISS TELEMETRY -->
+    <div class="tac-section active-focus" data-scene="scene-iss3d" id="sec-iss3d">
+       <span class="tac-st">// ORBITAL TRACKING</span>
+       <h2 class="tac-sn">ISS TELEMETRY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live tracking of the International Space Station trajectory and orbital parameters.</p>
+       
+       <div class="hud-panel" style="margin-top: 1.5rem;">
+          <div class="hud-row"><div class="hud-label">LATITUDE</div><div class="hud-val hud-green" id="iss3d-lat">—</div></div>
+          <div class="hud-row"><div class="hud-label">LONGITUDE</div><div class="hud-val hud-green" id="iss3d-lon">—</div></div>
+          <div class="hud-row"><div class="hud-label">ALTITUDE</div><div class="hud-val hud-cyan" id="iss3d-alt">408 km</div></div>
+          <div class="hud-row"><div class="hud-label">VELOCITY</div><div class="hud-val hud-cyan" id="iss3d-vel">7.66 km/s</div></div>
+          <div class="hud-row" style="margin-top:0.8rem; padding-top:0.8rem; border-top:1px dashed rgba(255,255,255,0.1);"><div class="hud-label">ILLUMINATION</div><div class="hud-val hud-amber" id="iss3d-vis">—</div></div>
+       </div>
+
+       <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+          <button class="lab-btn" id="iss3d-follow" style="font-size:0.6rem; padding:0.4rem 0.8rem;">📡 FOLLOW</button>
+          <button class="lab-btn secondary" id="iss3d-overview" style="font-size:0.6rem; padding:0.4rem 0.8rem;">🌍 OVERVIEW</button>
+          <button class="lab-btn secondary" id="iss3d-orbit" style="font-size:0.6rem; padding:0.4rem 0.8rem;">🔄 ORBIT PATH</button>
+       </div>
+       <div style="font-size: 0.55rem; color:var(--dim); margin-top: 0.8rem;">LAST UPDATE: <span id="iss3d-ts">connecting...</span></div>
+    </div>
+
+    <!-- JWST OBSERVATORY -->
+    <div class="tac-section" data-scene="scene-jwst" id="sec-jwst">
+       <span class="tac-st">// L2 OBSERVATORY</span>
+       <h2 class="tac-sn">JWST TRACKER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Monitoring the James Webb Space Telescope in its halo orbit around the Sun-Earth L2 Lagrange point.</p>
+       <div id="jwst-lagrange-info" style="background:rgba(17,24,39,0.75); border:1px solid rgba(255,255,255,0.08); border-radius:4px; padding:1rem; font-size:.62rem; color:var(--dim); line-height:1.7; margin-top:1rem;">
+         <div style="color:var(--p);font-weight:700;letter-spacing:.1em;margin-bottom:.5rem">⬡ LAGRANGE POINTS</div>
+         <div><span style="color:#00FF9F">L1</span> · Sunward 1.5M km · SOHO</div>
+         <div><span style="color:#8B5CF6">L2</span> · Anti-sun 1.5M km · JWST</div>
+       </div>
+    </div>
+
+    <!-- SOLAR SYSTEM ORRERY -->
+    <div class="tac-section" data-scene="scene-orrery" id="sec-orrery">
+       <span class="tac-st">// DEEP SPACE</span>
+       <h2 class="tac-sn">SOLAR ORRERY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live kinematic simulation of planetary bodies and major probes.</p>
+       <div style="display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn" id="orr-slower" style="padding:.4rem .8rem;font-size:.6rem">◀◀</button>
+          <button class="btn" id="orr-pause" style="padding:.4rem .8rem;font-size:.6rem">⏸</button>
+          <button class="btn" id="orr-faster" style="padding:.4rem .8rem;font-size:.6rem">▶▶</button>
+          <button class="btn btn-c" id="orr-reset" style="padding:.4rem .8rem;font-size:.6rem">⟳</button>
+       </div>
+       <div style="font-size:0.6rem; color:var(--dim); margin-top:0.8rem;">SIM SPEED: <span id="orr-speed-lbl" style="color:var(--g)">1×</span> <span id="orr-clock-sm" style="margin-left:8px;"></span></div>
+       <div id="orr-legend" style="display:flex; gap:.8rem; flex-wrap:wrap; margin-top:.7rem; font-size:.52rem; color:var(--dim)"></div>
+       <div id="orr-panel" style="display:none; margin-top:1rem; background:rgba(3,6,16,.94); border:1px solid var(--bd); padding:.8rem; border-left:2px solid var(--c)">
+            <div id="orr-panel-name" style="font-family:var(--head);font-size:.85rem;color:#fff;margin-bottom:.25rem"></div>
+            <div id="orr-panel-type" style="font-size:.52rem;color:var(--c);letter-spacing:.2em;margin-bottom:.6rem"></div>
+            <div id="orr-panel-rows" style="display:flex;flex-direction:column;gap:.25rem;font-size:.6rem"></div>
+       </div>
+    </div>
+
+    <!-- MISSION THEATER -->
+    <div class="tac-section" data-scene="scene-mt" id="sec-mt">
+       <span class="tac-st">// TRAJECTORY REPLAY</span>
+       <h2 class="tac-sn">MISSION THEATER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Reconstruct historic Apollo and Artemis trajectories.</p>
+       <div class="mt-cards" id="mt-cards" style="margin-top:1rem;"></div>
+       
+       <div class="hud-panel" style="margin-top:1rem;">
+          <div class="hud-row"><div class="hud-label">MISSION</div><div class="hud-val" id="mt-title">SELECT A MISSION</div></div>
+          <div class="hud-row"><div class="hud-label">PHASE</div><div class="hud-val hud-cyan" id="mt-phase">—</div></div>
+          <div class="hud-row"><div class="hud-label">DATE</div><div class="hud-val" id="mt-date">—</div></div>
+       </div>
+       
+       <div style="display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap;">
+          <button class="btn" id="mt-play" style="padding:.4rem .8rem;font-size:.6rem">▶ PLAY</button>
+          <button class="btn secondary" id="mt-slower" style="padding:.4rem .8rem;font-size:.6rem">◀◀</button>
+          <button class="btn secondary" id="mt-faster" style="padding:.4rem .8rem;font-size:.6rem">▶▶</button>
+          <button class="btn btn-c" id="mt-reset" style="padding:.4rem .8rem;font-size:.6rem">⟳</button>
+          <span style="font-size:.6rem; color:var(--dim); margin-left:auto; align-self:center;">SPD: <span id="mt-spd" style="color:var(--g)">1×</span></span>
+       </div>
+       
+       <div class="mt-timeline-wrap" style="margin-top:1.5rem;">
+          <div class="mt-timeline-track"><div class="mt-timeline-fill" id="mt-tl-fill"></div></div>
+          <div class="mt-phase-markers" id="mt-phase-marks"></div>
+          <input type="range" id="mt-timeline" min="0" max="1000" value="0">
+       </div>
+       <div id="mt-info" style="display:none;">
+          <div id="mt-info-title"></div><div id="mt-info-type"></div><div id="mt-info-rows"></div>
+       </div>
+       <div id="mt-milestone" style="display:none;"></div>
+    </div>
+
+    <!-- STARLINK DENSITY -->
+    <div class="tac-section" data-scene="scene-sl" id="sec-sl">
+       <span class="tac-st">// MEGACONSTELLATIONS</span>
+       <h2 class="tac-sn">STARLINK DENSITY</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Visualizing the orbital congestion in Low Earth Orbit (LEO).</p>
+       <div class="hud-panel" style="margin-top:1rem;">
+          <div class="hud-row"><div class="hud-label">TOTAL SATS</div><div class="hud-val" id="sl-total">—</div></div>
+          <div class="hud-row"><div class="hud-label">ACTIVE SHELLS</div><div class="hud-val hud-green" id="sl-active">6</div></div>
+          <div class="hud-row"><div class="hud-label">ORBITAL PLANES</div><div class="hud-val" id="sl-planes">72+</div></div>
+          <div class="hud-row"><div class="hud-label">KESSLER RISK</div><div class="hud-val" style="color:#FF4444;" id="sl-risk">ELEVATED</div></div>
+       </div>
+       <div id="sl-legend-3d" style="display:flex;flex-direction:column;gap:.3rem;font-size:.52rem;margin-top:1rem;"></div>
+    </div>
+
+    <!-- SPACE WEATHER -->
+    <div class="tac-section" data-scene="scene-blank" id="sec-hw">
+       <span class="tac-st">// NOAA INTEL</span>
+       <h2 class="tac-sn">SPACE WEATHER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live geomagnetic and solar wind data.</p>
+       <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-top:1rem;">
+          <div class="sw-card"><div class="sw-label">Kp INDEX</div><div class="sw-big" id="sw-kp">—</div></div>
+          <div class="sw-card"><div class="sw-label">SOLAR WIND</div><div class="sw-big" id="sw-wind">—</div><div class="sw-sub">km/s</div></div>
+          <div class="sw-card"><div class="sw-label">X-RAY FLUX</div><div class="sw-big" id="sw-xray">—</div></div>
+          <div class="sw-card"><div class="sw-label">AURORA PROB</div><div class="sw-big" id="sw-aurora">—</div></div>
+       </div>
+       <div id="sw-storm-banner" style="display:none;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.4);padding:.5rem .8rem;font-size:.62rem;color:var(--o);letter-spacing:.1em;text-align:center;margin-top:.7rem;animation:kpulse 1.5s ease-in-out infinite">
+          ⚠ GEOMAGNETIC STORM IN PROGRESS
+       </div>
+    </div>
+    
+    <!-- ORBITAL SANDBOX -->
+    <div class="tac-section" data-scene="scene-os" id="sec-os">
+       <span class="tac-st">// PHYSICS ENGINE</span>
+       <h2 class="tac-sn">ORBITAL SANDBOX</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+          <div><div class="lc-label">Semi-major axis <span id="os-sma-v" class="lc-val">6771 km</span></div>
+               <input type="range" class="lc-input" id="os-sma" min="6571" max="42164" value="6771" step="50"></div>
+          <div><div class="lc-label">Eccentricity <span id="os-ecc-v" class="lc-val">0.00</span></div>
+               <input type="range" class="lc-input" id="os-ecc" min="0" max="0.9" value="0" step="0.01"></div>
+          <div><div class="lc-label">Inclination <span id="os-inc-v" class="lc-val">0°</span></div>
+               <input type="range" class="lc-input" id="os-inc" min="0" max="180" value="0" step="1"></div>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">PERIOD</div><div class="hud-val hud-cyan" id="os-period">88 min</div></div>
+          <div class="hud-row"><div class="hud-label">VELOCITY</div><div class="hud-val hud-cyan" id="os-vel">7.8 km/s</div></div>
+          <div class="hud-row" style="margin-top:0.5rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.5rem;"><div class="hud-label">MATCH</div><div class="hud-val hud-amber" id="os-match">ISS</div></div>
+       </div>
+    </div>
+
+    <!-- REENTRY FORGE -->
+    <div class="tac-section" data-scene="scene-rf" id="sec-rf">
+       <span class="tac-st">// PHYSICS ENGINE</span>
+       <h2 class="tac-sn">REENTRY FORGE</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+          <div><div class="lc-label">Vehicle</div>
+            <select class="lc-select" id="rf-sat">
+              <option value="custom">— Custom —</option>
+              <option value="skylab">Skylab (1979) — 77t</option>
+              <option value="mir">Mir (2001) — 135t</option>
+            </select></div>
+          <div><div class="lc-label">Mass (kg) <span id="rf-mass-v" class="lc-val">2400</span></div>
+            <input type="range" class="lc-input" id="rf-mass" min="100" max="200000" value="2400" step="100"></div>
+          <div><div class="lc-label">Atmo Interface (km) <span id="rf-alt-v" class="lc-val">400</span></div>
+            <input type="range" class="lc-input" id="rf-alt" min="150" max="600" value="400" step="5"></div>
+       </div>
+       <div style="display:flex;gap:.4rem; margin-top:1rem;">
+          <button class="lab-btn" id="rf-btn-sim" style="font-size:.6rem">▶ SIMULATE BURN</button>
+          <button class="lab-btn secondary" id="rf-btn-reset" style="font-size:.6rem">⟳</button>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">STATUS</div><div class="hud-val" id="rf-status">AWAITING</div></div>
+          <div class="hud-row"><div class="hud-label">ALTITUDE</div><div class="hud-val" id="rf-r-alt">—</div></div>
+          <div class="hud-row"><div class="hud-label">HEATING</div><div class="hud-val" style="color:#FF4400" id="rf-r-heat">—</div></div>
+          <div class="hud-row"><div class="hud-label">SURVIVES?</div><div class="hud-val" id="rf-r-surv">—</div></div>
+       </div>
+    </div>
+    
+    <!-- DELTA-V PLANNER -->
+    <div class="tac-section" data-scene="scene-dv" id="sec-dv">
+       <span class="tac-st">// MISSION DESIGN</span>
+       <h2 class="tac-sn">DELTA-V PLANNER</h2>
+       <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+          <div><div class="lc-label">Origin Orbit</div>
+            <select class="lc-select" id="dv-from">
+              <option value="leo">Low Earth Orbit (LEO)</option>
+              <option value="geo">Geostationary (GEO)</option>
+              <option value="moon">Lunar orbit</option>
+            </select></div>
+          <div><div class="lc-label">Destination</div>
+            <select class="lc-select" id="dv-to">
+              <option value="geo">Geostationary (GEO)</option>
+              <option value="moon">Lunar orbit</option>
+              <option value="mars">Mars orbit</option>
+            </select></div>
+          <div><div class="lc-label">Payload Mass (kg) <span id="dv-mass-v" class="lc-val">1000</span></div>
+            <input type="range" class="lc-input" id="dv-mass" min="100" max="50000" value="1000" step="100"></div>
+       </div>
+       <div id="dv-budget" class="dv-budget" style="margin-top:1rem;"></div>
+       <div class="hud-panel" style="margin-top:1.5rem;">
+          <div class="hud-row"><div class="hud-label">TOTAL Δv</div><div class="hud-val hud-cyan" id="dv-total">—</div></div>
+          <div class="hud-row"><div class="hud-label">PROPELLANT</div><div class="hud-val hud-amber" id="dv-fuel">—</div></div>
+       </div>
+    </div>
+    
+    <!-- DEBRIS FIELD -->
+    <div class="tac-section" data-scene="scene-df" id="sec-df">
+       <span class="tac-st">// KESSLER SYNDROME</span>
+       <h2 class="tac-sn">DEBRIS FIELD</h2>
+       <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:1rem; margin-bottom:1.5rem;">
+          <select class="lc-select" id="df-shell" style="width:130px;font-size:.6rem">
+            <option value="leo">LEO (200-2000km)</option>
+            <option value="meo">MEO</option>
+            <option value="geo">GEO</option>
+          </select>
+          <button class="lab-btn" id="df-btn-add" style="font-size:.6rem">+ ADD 10</button>
+          <button class="lab-btn danger" id="df-btn-casc" style="font-size:.6rem">⚠ CASCADE</button>
+          <button class="lab-btn secondary" id="df-btn-reset" style="font-size:.6rem">⟳</button>
+       </div>
+       <div class="hud-panel">
+          <div class="hud-row"><div class="hud-label">OBJECTS</div><div class="hud-val" id="df-count">0</div></div>
+          <div class="hud-row"><div class="hud-label">STATUS</div><div class="hud-val hud-green" id="df-status">STABLE</div></div>
+       </div>
+       <div class="kessler-warn" id="df-kessler" style="display:none; color:#FF4444; font-weight:bold; margin-top:1rem;">⚠ KESSLER CASCADE</div>
+    </div>
+
+    <!-- TLE DECODER -->
+    <div class="tac-section" data-scene="scene-tle" id="sec-tle">
+       <span class="tac-st">// ORBITAL DATA</span>
+       <h2 class="tac-sn">TLE DECODER</h2>
+       <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Paste a Two-Line Element set to decode orbital parameters.</p>
+       <textarea id="tle-input" placeholder="Paste TLE here..." style="width:100%;height:100px;background:rgba(0,0,0,0.5);border:1px solid var(--bd);color:var(--c);font-family:var(--mono);font-size:.6rem;padding:.6rem;outline:none;resize:vertical;line-height:1.6;margin-top:1rem;"></textarea>
+       <div style="display:flex;gap:.5rem;margin-top:0.8rem;margin-bottom:1.5rem;">
+          <button class="btn" id="tle-decode-btn" style="font-size:.6rem;padding:.4rem .8rem">⬡ DECODE</button>
+          <button class="btn secondary" id="tle-iss-btn" style="font-size:.6rem;padding:.4rem .8rem">📡 LOAD ISS</button>
+       </div>
+       <div id="tle-output" style="background:rgba(0,0,0,0.5);border:1px solid var(--bd);padding:1rem;font-size:0.65rem;font-family:var(--mono);"></div>
+    </div>
+
+    <!-- $VOID TOKEN -->
+    <div class="tac-section" data-scene="scene-blank" id="sec-void">
+       <span class="tac-st">// BLOCKCHAIN ORACLE</span>
+       <h2 class="tac-sn">$VOID API</h2>
+       <div id="void-config" style="background:rgba(255,200,87,0.1);border:1px solid rgba(255,200,87,.3);padding:1.2rem;margin-top:1rem;display:flex;flex-direction:column;gap:1rem;border-radius:4px">
+          <div>
+            <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">BAGS API KEY</div>
+            <input id="bags-api-key" type="password" placeholder="bags_live_..." style="width:100%;border:1px solid var(--bd);padding:.5rem;background:#000;color:#fff;">
+          </div>
+          <div>
+            <div style="font-size:.55rem;letter-spacing:.2em;color:var(--a);margin-bottom:.4rem">$VOID MINT</div>
+            <input id="void-mint" type="text" placeholder="Mint..." style="width:100%;border:1px solid var(--bd);padding:.5rem;background:#000;color:#fff;">
+          </div>
+          <button class="btn btn-a" onclick="voidConnect()" style="font-size:0.65rem;">⬡ CONNECT</button>
+          <span id="void-conn-status" style="font-size:.6rem;color:var(--dim);"></span>
+       </div>
+       <div class="hud-panel" style="margin-top:1.5rem;" id="vbox-price">
+          <div class="hud-row"><div class="hud-label">PRICE (SOL)</div><div class="hud-val" style="color:var(--a)" id="v-price">—</div></div>
+          <div class="hud-row"><div class="hud-label">MARKET CAP</div><div class="hud-val hud-green" id="v-mcap">—</div></div>
+          <div class="hud-row"><div class="hud-label">FEES</div><div class="hud-val hud-cyan" id="v-fees">—</div></div>
+       </div>
+    </div>
+
+  </div> <!-- /left-pane -->
+
+
+  <!-- RIGHT PANE: 3D VIEWPORT -->
+  <div id="right-pane">
+    <div class="scene-container active" id="scene-iss3d-canvas"><canvas id="iss3d-cv"></canvas></div>
+    <div class="scene-container" id="scene-jwst">
+        <canvas id="jwst-cv"></canvas>
+        <div class="scene-overlay mt-cam-btns">
+            <button class="btn" id="jwst-cam-system" style="padding:.5rem 1rem;font-size:.65rem">🌍 SYSTEM</button>
+            <button class="btn" id="jwst-cam-follow" style="padding:.5rem 1rem;font-size:.65rem">🔭 JWST</button>
+            <button class="btn" id="jwst-cam-overview" style="padding:.5rem 1rem;font-size:.65rem">⬆ TOP</button>
+        </div>
+    </div>
+    <div class="scene-container" id="scene-orrery"><canvas id="orr-cv"></canvas></div>
+    <div class="scene-container" id="scene-mt-canvas"><canvas id="mt-cv"></canvas></div>
+    <div class="scene-container" id="scene-sl"><canvas id="sl-cv"></canvas></div>
+    <div class="scene-container" id="scene-os"><canvas id="os-cv"></canvas></div>
+    <div class="scene-container" id="scene-rf"><canvas id="rf-cv"></canvas></div>
+    <div class="scene-container" id="scene-dv"><canvas id="dv-cv"></canvas></div>
+    <div class="scene-container" id="scene-df"><canvas id="df-cv"></canvas></div>
+    <div class="scene-container" id="scene-tle"><canvas id="tle-cv"></canvas></div>
+    <div class="scene-container" id="scene-blank">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#112233;font-size:3rem;font-family:var(--mono);">
+            NO FEED SIGNAL
+        </div>
+    </div>
+  </div> <!-- /right-pane -->
+
+  <!-- FLOATING AI TERMINAL -->
+  <div id="ai-terminal-float">
+      <div class="term-hd" style="background:rgba(2,4,10,0.9); border-bottom:1px solid rgba(0,212,255,0.4); padding: 0.6rem 1rem;">
+        <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+        <span style="font-size:.58rem;color:var(--dim);margin-left:.5rem">AI ENGINE:</span>
+        <span style="font-size:.58rem;color:var(--g);margin-left:.3rem" id="ai-status">⬡ STANDBY</span>
+        <button id="ai-close-btn" style="float:right; background:none; border:none; color:var(--dim); cursor:pointer;">✕</button>
+      </div>
+      <div class="term-out" id="to" style="max-height: 300px; height: 300px; padding: 1rem;"></div>
+      <div class="term-ir" style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.05); background:#000;">
+        <span class="tip">void@signal:~$</span>
+        <input id="ti" type="text" placeholder="ask the oracle..." autocomplete="off" spellcheck="false" style="font-size:0.75rem;">
+      </div>
+  </div>
+  <button class="term-toggle-btn" id="ai-toggle-btn">⬡</button>
+
+  <!-- BACKGROUND ELEMENTS NEEDED FOR COMPATIBILITY -->
+  <div style="display:none;" id="epitaphs-s"><div id="ep-grid"></div><div id="fg"></div></div>
+  <div style="display:none;" id="dsn-s"><div id="dsn-ts"></div><div id="dsn-grid"></div><div id="dsn-contacts"></div></div>
+  <div style="display:none;" id="feeds-s"><div id="news-g"></div><div id="lg"></div><div id="today-box"></div></div>
+  <div style="display:none;" id="cost-cv"></div><div style="display:none;" id="cost-tooltip"></div>
+  <div style="display:none;" id="bio-timeline"></div><button style="display:none;" id="bio-play-btn"></button><button style="display:none;" id="bio-reset-btn"></button>
+  <div style="display:none" id="void-last-update"></div>
+
+  <!-- SCRIPT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="main.js"></script>
+  
+  <!-- SCENE CONTROLLER -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // AI Terminal Toggle
+        const term = document.getElementById('ai-terminal-float');
+        const btn = document.getElementById('ai-toggle-btn');
+        const closeBtn = document.getElementById('ai-close-btn');
+        
+        btn.addEventListener('click', () => {
+            term.classList.add('open');
+            btn.classList.add('hidden');
+            document.getElementById('ti').focus();
+        });
+        closeBtn.addEventListener('click', () => {
+            term.classList.remove('open');
+            btn.classList.remove('hidden');
+        });
+        
+        // Scene Switcher Logic
+        const sections = document.querySelectorAll('.tac-section');
+        const containers = document.querySelectorAll('.scene-container');
+        
+        function switchScene(sceneId) {
+            // Update canvases
+            containers.forEach(c => {
+                c.classList.remove('active');
+            });
+            const tg = sceneId;
+            // Handle slight id mismatches
+            let targetCanvas = document.getElementById(tg);
+            if(!targetCanvas && document.getElementById(tg+'-canvas')) {
+                targetCanvas = document.getElementById(tg+'-canvas');
+            }
+            if(targetCanvas) targetCanvas.classList.add('active');
+            
+            // Force resize trigger for active canvas to ensure it fills
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        // Intersection Observer to switch scenes as user scrolls left pane
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    // entry.target is the section
+                    sections.forEach(s => s.classList.remove('active-focus'));
+                    entry.target.classList.add('active-focus');
+                    const sceneId = entry.target.getAttribute('data-scene');
+                    switchScene(sceneId);
+                }
+            });
+        }, {
+            root: document.getElementById('left-pane'),
+            threshold: 0.5 // Switch when section is half visible
+        });
+
+        sections.forEach(s => {
+            observer.observe(s);
+            // Also allow clicking to focus
+            s.addEventListener('click', () => {
+                s.scrollIntoView({behavior: 'smooth', block: 'center'});
+            });
+        });
+
+        // Trigger on load
+        setTimeout(() => {
+          switchScene('scene-iss3d-canvas');
+        }, 500);
+    });
+  </script>
+</body>
+</html>
+"""
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(html)
+
+if __name__ == "__main__":
+    build_index()

@@ -2575,7 +2575,7 @@ function buildScene(canvasId, camDist = 4) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return null;
   const W = canvas.parentElement.offsetWidth || 700;
-  const H = Math.max(360, Math.round(W * 9 / 16));
+  const H = canvas.parentElement.offsetHeight || 500;
   canvas.width = W; canvas.height = H;
 
   const scene    = new THREE.Scene();
@@ -2651,7 +2651,7 @@ function buildScene(canvasId, camDist = 4) {
   // Resize
   function onResize() {
     const W2 = canvas.parentElement.offsetWidth || 700;
-    const H2 = Math.max(360, Math.round(W2 * 9 / 16));
+    const H2 = canvas.parentElement.offsetHeight || 500;
     canvas.width = W2; canvas.height = H2;
     renderer.setSize(W2, H2);
     camera.aspect = W2 / H2;
@@ -7271,3 +7271,59 @@ if(bioSec)bioObs.observe(bioSec);
   els.forEach(el => obs.observe(el));
 })();
 
+
+
+// FORCED INIT FOR SPLIT PANE
+setTimeout(function(){ if(typeof rfInit !== 'undefined') rfInit(); if(typeof osInit !== 'undefined') osInit(); if(typeof dfInit !== 'undefined') dfInit(); if(typeof dvInit !== 'undefined') dvInit(); if(typeof apInit !== 'undefined') apInit(); }, 1500);
+
+/* ════════════════════════════════════════════════════════════════
+   GSAP & SCROLL SCENE HANDLING
+════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // AI Terminal
+    const term = document.getElementById('ai-terminal-float');
+    const btn = document.getElementById('ai-toggle-btn');
+    const closeBtn = document.getElementById('ai-close-btn');
+    if(btn) btn.addEventListener('click', () => { term.classList.add('open'); btn.classList.add('hidden'); document.getElementById('ti').focus(); });
+    if(closeBtn) closeBtn.addEventListener('click', () => { term.classList.remove('open'); btn.classList.remove('hidden'); });
+
+    const sections = document.querySelectorAll('.tac-section');
+    const containers = document.querySelectorAll('.scene-container');
+
+    function switchScene(sceneId) {
+        containers.forEach(c => c.classList.remove('active'));
+        let targetCanvas = document.getElementById(sceneId);
+        if(!targetCanvas && document.getElementById(sceneId+'-canvas')) { targetCanvas = document.getElementById(sceneId+'-canvas'); }
+        if(targetCanvas) targetCanvas.classList.add('active');
+        window.dispatchEvent(new Event('resize'));
+    }
+
+    sections.forEach((sec, i) => {
+        const sceneId = sec.getAttribute('data-scene');
+        
+        ScrollTrigger.create({
+            trigger: sec,
+            start: "top center",
+            end: "bottom center",
+            onEnter: () => {
+                sections.forEach(s => s.classList.remove('active-focus'));
+                sec.classList.add('active-focus');
+                switchScene(sceneId);
+            },
+            onEnterBack: () => {
+                sections.forEach(s => s.classList.remove('active-focus'));
+                sec.classList.add('active-focus');
+                switchScene(sceneId);
+            }
+        });
+    });
+
+    // Make hero header parallax
+    gsap.to("#hero-section video", {
+        yPercent: 30,
+        ease: "none",
+        scrollTrigger: { trigger: "#hero-section", start: "top top", end: "bottom top", scrub: true }
+    });
+});

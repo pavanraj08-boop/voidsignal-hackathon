@@ -18,7 +18,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg) radial-gradient(circle at 50% 0%, rgba(139,92,246,0.15) 0%, transparent 60%) fixed;color:#fff;font-family:var(--mono);overflow-x:hidden;cursor:crosshair;text-rendering:optimizeLegibility}
+body{background:var(--bg);color:#fff;font-family:var(--mono);overflow-x:hidden;cursor:crosshair;text-rendering:optimizeLegibility}
 
 /* Scanline */
 body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
