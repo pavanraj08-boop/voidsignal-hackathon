@@ -53,14 +53,11 @@
   <div id="content-scroll" style="position:relative; z-index:10; padding-bottom:10vh;">
 
     
-      <div style="display: flex; gap: 1rem; margin-top: 1.2rem;">
-        <div style="font-size: 0.65rem; color: var(--g);"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g);margin-right:4px;box-shadow:0 0 5px var(--g);"></span>UPLINK SECURE</div>
-        <div style="font-size: 0.65rem; color: var(--a);" id="tb-void-price">$VOID: —</div>
-      </div>
-    </div>
+      
 
     <!-- ISS TELEMETRY -->
-    <div class="tac-section active-focus" data-scene="scene-iss3d" id="sec-iss3d">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    <div class="tac-section active-focus" data-scene="scene-iss3d" id="sec-iss3d">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// ORBITAL TRACKING</span>
        <h2 class="tac-sn">ISS TELEMETRY</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live tracking of the International Space Station trajectory and orbital parameters.</p>
@@ -79,8 +76,10 @@
           <button class="lab-btn secondary" id="iss3d-orbit" style="font-size:0.6rem; padding:0.4rem 0.8rem;">🔄 ORBIT PATH</button>
        </div>
        <div style="font-size: 0.55rem; color:var(--dim); margin-top: 0.8rem;">LAST UPDATE: <span id="iss3d-ts">connecting...</span></div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-jwst" id="sec-jwst">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-jwst" id="sec-jwst">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// L2 OBSERVATORY</span>
        <h2 class="tac-sn">JWST TRACKER</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Monitoring the James Webb Space Telescope in its halo orbit around the Sun-Earth L2 Lagrange point.</p>
@@ -89,8 +88,10 @@
          <div><span style="color:#00FF9F">L1</span> · Sunward 1.5M km · SOHO</div>
          <div><span style="color:#8B5CF6">L2</span> · Anti-sun 1.5M km · JWST</div>
        </div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-orrery" id="sec-orrery">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-orrery" id="sec-orrery">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// DEEP SPACE</span>
        <h2 class="tac-sn">SOLAR ORRERY</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live kinematic simulation of planetary bodies and major probes.</p>
@@ -107,8 +108,10 @@
             <div id="orr-panel-type" style="font-size:.52rem;color:var(--c);letter-spacing:.2em;margin-bottom:.6rem"></div>
             <div id="orr-panel-rows" style="display:flex;flex-direction:column;gap:.25rem;font-size:.6rem"></div>
        </div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-mt" id="sec-mt">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-mt" id="sec-mt">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// TRAJECTORY REPLAY</span>
        <h2 class="tac-sn">MISSION THEATER</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Reconstruct historic Apollo and Artemis trajectories.</p>
@@ -137,8 +140,10 @@
           <div id="mt-info-title"></div><div id="mt-info-type"></div><div id="mt-info-rows"></div>
        </div>
        <div id="mt-milestone" style="display:none;"></div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-sl" id="sec-sl">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-sl" id="sec-sl">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// MEGACONSTELLATIONS</span>
        <h2 class="tac-sn">STARLINK DENSITY</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Visualizing the orbital congestion in Low Earth Orbit (LEO).</p>
@@ -149,8 +154,10 @@
           <div class="hud-row"><div class="hud-label">KESSLER RISK</div><div class="hud-val" style="color:#FF4444;" id="sl-risk">ELEVATED</div></div>
        </div>
        <div id="sl-legend-3d" style="display:flex;flex-direction:column;gap:.3rem;font-size:.52rem;margin-top:1rem;"></div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-blank" id="sec-hw">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-blank" id="sec-hw">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// NOAA INTEL</span>
        <h2 class="tac-sn">SPACE WEATHER</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Live geomagnetic and solar wind data.</p>
@@ -163,8 +170,10 @@
        <div id="sw-storm-banner" style="display:none;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.4);padding:.5rem .8rem;font-size:.62rem;color:var(--o);letter-spacing:.1em;text-align:center;margin-top:.7rem;animation:kpulse 1.5s ease-in-out infinite">
           ⚠ GEOMAGNETIC STORM IN PROGRESS
        </div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-os" id="sec-os">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-os" id="sec-os">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// PHYSICS ENGINE</span>
        <h2 class="tac-sn">ORBITAL SANDBOX</h2>
        <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
@@ -180,8 +189,10 @@
           <div class="hud-row"><div class="hud-label">VELOCITY</div><div class="hud-val hud-cyan" id="os-vel">7.8 km/s</div></div>
           <div class="hud-row" style="margin-top:0.5rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.5rem;"><div class="hud-label">MATCH</div><div class="hud-val hud-amber" id="os-match">ISS</div></div>
        </div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-rf" id="sec-rf">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-rf" id="sec-rf">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// PHYSICS ENGINE</span>
        <h2 class="tac-sn">REENTRY FORGE</h2>
        <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
@@ -233,8 +244,10 @@
           <div class="hud-row"><div class="hud-label">TOTAL Δv</div><div class="hud-val hud-cyan" id="dv-total">—</div></div>
           <div class="hud-row"><div class="hud-label">PROPELLANT</div><div class="hud-val hud-amber" id="dv-fuel">—</div></div>
        </div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-df" id="sec-df">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-df" id="sec-df">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// KESSLER SYNDROME</span>
        <h2 class="tac-sn">DEBRIS FIELD</h2>
        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:1rem; margin-bottom:1.5rem;">
@@ -252,8 +265,10 @@
           <div class="hud-row"><div class="hud-label">STATUS</div><div class="hud-val hud-green" id="df-status">STABLE</div></div>
        </div>
        <div class="kessler-warn" id="df-kessler" style="display:none; color:#FF4444; font-weight:bold; margin-top:1rem;">⚠ KESSLER CASCADE</div>
-    </div>\n    </div>
-    <div class="tac-section" data-scene="scene-tle" id="sec-tle">\n       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+    </div>
+    </div>
+    <div class="tac-section" data-scene="scene-tle" id="sec-tle">
+       <div class="tac-card-inner glass-panel" style="padding:2.5rem; border-radius:16px; background:rgba(3,7,16,0.65); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 40px rgba(0,0,0,0.5);">
        <span class="tac-st">// ORBITAL DATA</span>
        <h2 class="tac-sn">TLE DECODER</h2>
        <p style="font-size:0.7rem; color:var(--dim); line-height:1.6; margin-top:0.8rem;">Paste a Two-Line Element set to decode orbital parameters.</p>
@@ -286,12 +301,13 @@
           <div class="hud-row"><div class="hud-label">MARKET CAP</div><div class="hud-val hud-green" id="v-mcap">—</div></div>
           <div class="hud-row"><div class="hud-label">FEES</div><div class="hud-val hud-cyan" id="v-fees">—</div></div>
        </div>
-    </div>\n    </div>
+    </div>
+    </div>
 
   
   </div>
 
-  <div id="canvas-fixed-bg" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:0; pointer-events:none;">
+  <div id="canvas-fixed-bg" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; pointer-events:none;">
 
     <div class="scene-container active" id="scene-iss3d-canvas"><canvas id="iss3d-cv"></canvas></div>
     <div class="scene-container" id="scene-jwst">
