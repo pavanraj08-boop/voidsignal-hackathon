@@ -416,7 +416,7 @@ async function iss3FetchPos(){
 
 // Init when visible
 (function(){
-  const el=document.getElementById('iss3d-s');
+  const el=document.getElementById('sec-iss3d');
   if(!el)return;
   new IntersectionObserver(entries=>{
     if(entries[0].isIntersecting && !iss3Built){
@@ -435,7 +435,7 @@ async function iss3FetchPos(){
         },100);
       }
     }
-  },{threshold:.05}).observe(el);
+  },{threshold:0}).observe(el);
 })();
 
 })(); // end ISS 3D IIFE
@@ -892,7 +892,7 @@ function jwBuildScene(){
 
 /* ── Lazy load ──────────────────────────────────────────────── */
 (function(){
-  var el=document.getElementById('jwst-s'); if(!el)return;
+  var el=document.getElementById('sec-jwst'); if(!el)return;
   new IntersectionObserver(function(entries){
     if(entries[0].isIntersecting&&!jwBuilt){
       if(typeof THREE!=='undefined')jwBuildScene();
@@ -1859,7 +1859,7 @@ function mtSelectMission(id){
   document.getElementById('mt-tl-fill').style.width='0%';
 
   // Update mission-colour CSS var
-  document.getElementById('mt-s').style.setProperty('--mt-col',mtMission.colorHex);
+  document.getElementById('sec-mt-canvas').style.setProperty('--mt-col',mtMission.colorHex);
   document.querySelectorAll('.mt-card').forEach(c=>{
     c.style.setProperty('--mt-col',mtMission.colorHex);
     c.classList.toggle('active',c.dataset.id===id);
@@ -1985,14 +1985,14 @@ setInterval(()=>{
 
 // ── INIT ON SCROLL INTO VIEW ──────────────────────────────────────
 (function(){
-  const el=document.getElementById('mt-s');if(!el)return;
+  const el=document.getElementById('sec-mt-canvas');if(!el)return;
   new IntersectionObserver(entries=>{
     if(entries[0].isIntersecting&&!mtBuilt){
       mtInit();
       // Auto-load Voyager 1 after a short delay
       setTimeout(()=>mtSelectMission('voyager1'),400);
     }
-  },{threshold:.05}).observe(el);
+  },{threshold:0}).observe(el);
 })();
 /* ════════════════════════════════════════════════════════════════
    MISSION CONTROL — Live ISS Telemetry
@@ -4763,7 +4763,7 @@ document.getElementById('orr-reset')?.addEventListener('click',orrReset);
   let initted=false;
   new IntersectionObserver(entries=>{
     if(entries[0].isIntersecting&&!initted){initted=true;orrBuildScene();orrAnimFrame();}
-  },{threshold:.05}).observe(el);
+  },{threshold:0}).observe(el);
 })();
 
 
@@ -5990,7 +5990,7 @@ async function slFetch() {
 }
 
 (function slInit() {
-  const el = document.getElementById('sl-s');
+  const el = document.getElementById('sec-sl');
   if (!el) return;
   new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) slFetch();
