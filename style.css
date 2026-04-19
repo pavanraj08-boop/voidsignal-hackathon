@@ -665,6 +665,14 @@ button:focus-visible,input:focus-visible,a:focus-visible{
   transition:all .2s;white-space:nowrap;text-transform:uppercase}
 .lab-tab-btn.on{color:var(--g);border-bottom-color:var(--g)}
 .lab-tab-btn:hover:not(.on){color:#fff}
+
+.lab-tab canvas {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 400px;
+  display: block;
+}
+
 .lab-p{display:none}.lab-p.on{display:block}
 .lab-layout{display:grid;grid-template-columns:240px 1fr;gap:1.4rem;align-items:start}
 .lab-controls{background:var(--bg2);backdrop-filter:blur(16px);border:1px solid var(--bd);padding:1.2rem;display:flex;flex-direction:column;gap:.9rem}

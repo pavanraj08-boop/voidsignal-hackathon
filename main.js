@@ -5274,7 +5274,17 @@ async function voidFetch(key, mint) {
   const hdr    = { 'x-api-key': key };
 
   try {
-    // Trade quote — price discovery
+    // 1. Fetch SOL/USDC price from Jupiter API for conversion
+    let solUsdPrice = 0;
+    try {
+      const jupRes = await fetch('https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112');
+      const jupData = await jupRes.json();
+      if (jupData?.data?.So11111111111111111111111111111111111111112?.price) {
+        solUsdPrice = parseFloat(jupData.data.So11111111111111111111111111111111111111112.price);
+      }
+    } catch(e) { console.warn('Jupiter API fetch failed:', e); }
+
+    // 2. Trade quote — price discovery from Bags
     const quoteRes  = await fetch(`${BAGS}/trade/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=${mint}&amount=1000000&slippage=1`, { headers: hdr });
     const quoteData = await quoteRes.json();
 
@@ -5283,9 +5293,20 @@ async function voidFetch(key, mint) {
       const solPerToken = q.inAmount / q.outAmount;
       document.getElementById('v-price').textContent = solPerToken.toFixed(8) + ' SOL';
       document.getElementById('vbox-price').style.borderColor = 'rgba(255,200,87,.5)';
+
+      if (solUsdPrice > 0) {
+        const tokenUsd = solPerToken * solUsdPrice;
+        document.getElementById('v-price-usd').textContent = '≈ $' + tokenUsd.toFixed(6) + ' USD';
+        
+        // Assume 1B supply for Market Cap formatting
+        const mcap = tokenUsd * 1000000000;
+        const mcapFormatted = mcap > 1000000 ? '$' + (mcap/1000000).toFixed(2) + 'M' : '$' + (mcap/1000).toFixed(1) + 'K';
+        document.getElementById('v-mcap').textContent = mcapFormatted;
+        document.getElementById('vbox-mcap').style.borderColor = 'rgba(0,255,159,.5)';
+      }
     }
 
-    // Lifetime fees
+    // 3. Lifetime fees from Bags
     const feesRes  = await fetch(`${BAGS}/analytics/token-lifetime-fees?tokenMint=${mint}`, { headers: hdr });
     const feesData = await feesRes.json();
 
@@ -6530,6 +6551,154 @@ document.getElementById('sky-loc-btn')?.addEventListener('click', () => {
   }
 
   document.querySelector('[data-lab="t7"]')?.addEventListener('click', ()=>{
+    if(!built) setTimeout(init, 100);
+  });
+})();
+
+/* ═══════════════════════════════════════════════
+   TOOL 8: JUPITER GRAVITY ASSIST SLINGSHOT
+════════════════════════════════════════════════ */
+(function(){
+  let cv, ctx, cw, ch;
+  let animId = null;
+  let built = false;
+  
+  // Physics state
+  let ship = {x: 0, y: 0, vx: 0, vy: 0};
+  let path = [];
+  let jupiter = {x: 0, y: 0, mass: 5000, radius: 40};
+  const G = 1.0;
+  
+  // UI controls
+  let approachVel = 12.0;
+
+  function init() {
+    if(built) return;
+    cv = document.getElementById('ga-cv');
+    if(!cv) return;
+    
+    built = true;
+    cw = cv.parentElement.offsetWidth || 800;
+    ch = cv.parentElement.offsetHeight || 500;
+    if (ch < 450) ch = 450;
+    
+    cv.width = cw; cv.height = ch;
+    cv.style.height = ch + 'px';
+    cv.style.width = '100%';
+    ctx = cv.getContext('2d');
+    
+    jupiter.x = cw / 2;
+    jupiter.y = ch / 2;
+    
+    // Sliders
+    document.getElementById('ga-vel')?.addEventListener('input', e=>{
+      approachVel = +e.target.value;
+      document.getElementById('ga-vel-val').textContent = approachVel.toFixed(1) + ' km/s';
+      resetSim();
+    });
+
+    cv.addEventListener('click', resetSim);
+    
+    resetSim();
+    loop();
+  }
+  
+  function resetSim() {
+    ship.x = 0;
+    ship.y = ch / 2 + 80; // Offset impact parameter
+    ship.vx = approachVel;
+    ship.vy = 0;
+    path = [];
+  }
+  
+  function loop() {
+    // Clear canvas
+    ctx.fillStyle = '#050a14';
+    ctx.fillRect(0, 0, cw, ch);
+    
+    // Physics integration (Euler)
+    const steps = 10;
+    for(let i=0; i<steps; i++){
+      const dx = jupiter.x - ship.x;
+      const dy = jupiter.y - ship.y;
+      const distSq = dx*dx + dy*dy;
+      const dist = Math.sqrt(distSq);
+      
+      if(dist > jupiter.radius) {
+        const force = (G * jupiter.mass) / distSq;
+        const ax = force * (dx / dist);
+        const ay = force * (dy / dist);
+        
+        ship.vx += ax * 0.1;
+        ship.vy += ay * 0.1;
+      } else {
+        // Crashed
+        ship.vx = 0; ship.vy = 0;
+      }
+      
+      ship.x += ship.vx * 0.1;
+      ship.y += ship.vy * 0.1;
+
+      // Track path
+      if(i%5 === 0 && (ship.x > 0 && ship.x < cw && ship.y > 0 && ship.y < ch)){
+        path.push({x: ship.x, y: ship.y});
+        if(path.length > 300) path.shift();
+      }
+    }
+    
+    // Auto-restart if out of bounds on right or crashed
+    if(ship.x > cw + 100 || ship.y < -100 || ship.y > ch + 100) resetSim();
+
+    // Draw path
+    ctx.beginPath();
+    for(let i=0; i<path.length; i++) {
+        const pt = path[i];
+        if(i===0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+    }
+    ctx.strokeStyle = 'rgba(0, 212, 255, 0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw Jupiter
+    const gradient = ctx.createRadialGradient(jupiter.x-10, jupiter.y-10, jupiter.radius/5, jupiter.x, jupiter.y, jupiter.radius);
+    gradient.addColorStop(0, '#d19c4d');
+    gradient.addColorStop(1, '#664516');
+    ctx.beginPath();
+    ctx.arc(jupiter.x, jupiter.y, jupiter.radius, 0, Math.PI*2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,200,87,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw Ship
+    ctx.beginPath();
+    ctx.arc(ship.x, ship.y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#00ff9f';
+    ctx.fill();
+    
+    // Draw Velocity Vector
+    ctx.beginPath();
+    ctx.moveTo(ship.x, ship.y);
+    ctx.lineTo(ship.x + ship.vx*2, ship.y + ship.vy*2);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Update Telemetry
+    const vMag = Math.sqrt(ship.vx*ship.vx + ship.vy*ship.vy);
+    const dvGain = (vMag - approachVel).toFixed(2);
+    document.getElementById('ga-dv').textContent = dvGain > 0 ? '+' + dvGain + ' km/s' : dvGain + ' km/s';
+
+    // Deflection angle logic (approximate relative to horizontal entry)
+    let def_angle = Math.atan2(ship.vy, ship.vx) * (180 / Math.PI);
+    document.getElementById('ga-def').textContent = Math.abs(def_angle).toFixed(1) + '°';
+    
+    animId = requestAnimationFrame(loop);
+  }
+
+  document.querySelector('[data-lab="t8"]')?.addEventListener('click', ()=>{
     if(!built) setTimeout(init, 100);
   });
 })();

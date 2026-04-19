@@ -655,6 +655,7 @@
     <button class="lab-tab-btn"     data-lab="t5">☄ APOPHIS 2029</button>
     <button class="lab-tab-btn"     data-lab="t6">🌟 EXOPLANET TRANSITS</button>
     <button class="lab-tab-btn"     data-lab="t7">⚫ BLACK HOLE EVENT HORIZON</button>
+    <button class="lab-tab-btn"     data-lab="t8">🛰 GRAVITY ASSIST</button>
   </div>
 
   <!-- TOOL 1 — Reentry Forge -->
@@ -862,6 +863,37 @@
     <p style="font-size:.65rem;color:var(--dim);line-height:1.7">
       Visualising the photon sphere and event horizon of a Schwarzschild black hole using gravitational lensing ray-marching. Drag to orbit · scroll to zoom.
     </p>
+  </div>
+
+  <!-- T8: GRAVITY ASSIST -->
+  <div class="lab-tab" id="lt-t8">
+    <div class="sh" style="margin-bottom:1.5rem">
+      <span class="st">// SIMULATION</span>
+      <h3 class="sn" style="font-size:1.1rem">JUPITER GRAVITY SLINGSHOT</h3>
+      <div class="sl"></div>
+    </div>
+    <div class="lab-layout" style="margin-bottom:1rem">
+      <div class="lab-controls">
+        <label>APPROACH VELOCITY <br><span class="v-val" id="ga-vel-val">12.0 km/s</span></label>
+        <input type="range" id="ga-vel" min="5" max="30" step="0.5" value="12">
+        <div class="info-block">
+          A gravity assist (slingshot) changes a spacecraft's velocity relative to the Sun by entering and leaving the gravitational field of a moving planet.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1rem">
+          <div class="val-box">
+            <span>DEFLECTION</span>
+            <div id="ga-def">--°</div>
+          </div>
+          <div class="val-box">
+            <span>DELTA-V GAIN</span>
+            <div id="ga-dv">-- km/s</div>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative; width:100%; min-height:450px; border:1px solid var(--bd); background:#000;">
+        <canvas id="ga-cv"></canvas>
+      </div>
+    </div>
   </div>
 </div>
 
