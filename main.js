@@ -591,14 +591,22 @@ function buildScene() {
   scene.add(sunLight);
   
   // Stars background
-  const sp=new Float32Array(2000*3),sc=new Float32Array(2000*3);
-  for(let i=0;i<2000;i++){
-    const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),r=800+Math.random()*200;
+  const sp=new Float32Array(3000*3),sc=new Float32Array(3000*3);
+  const rng=()=>Math.random();
+  for(let i=0;i<3000;i++){
+    const th=rng()*Math.PI*2,ph=Math.acos(2*rng()-1),r=800+rng()*200;
     sp[i*3]=r*Math.sin(ph)*Math.cos(th);sp[i*3+1]=r*Math.cos(ph);sp[i*3+2]=r*Math.sin(ph)*Math.sin(th);
     sc[i*3]=.9;sc[i*3+1]=.9;sc[i*3+2]=1;
   }
   const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));sg.setAttribute('color',new THREE.BufferAttribute(sc,3));
-  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:.6,vertexColors:true})));
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:1.0,vertexColors:true})));
+
+  // Sun
+  const sunGlobe = new THREE.Mesh(new THREE.SphereGeometry(15, 32, 32), new THREE.MeshBasicMaterial({color: 0xffcc33}));
+  sunGlobe.position.set(500, 0, 0);
+  scene.add(sunGlobe);
+  const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(22, 32, 32), new THREE.MeshBasicMaterial({color: 0xffaa00, transparent:true, opacity:0.3, blending: THREE.AdditiveBlending}));
+  sunGlobe.add(sunGlow);
 
   // Earth
   const earthGeo = new THREE.SphereGeometry(2.5, 32, 32);
@@ -607,8 +615,32 @@ function buildScene() {
   earthMesh.position.set(0,0,0);
   scene.add(earthMesh);
   
-  // L2 Pivot (Always opposite the sun relative to Earth, but for simulation Earth is origin, Sun is +X)
-  // L2 is at -X. Distance to L2 is 1.5 million km. Scaled here to -20
+  // Create Lagrange Points
+  const lagrangePoints = [
+      {name: 'L1', pos: new THREE.Vector3(20, 0, 0), color: 0x00ffaa}, // Towards Sun
+      {name: 'L2', pos: new THREE.Vector3(-20, 0, 0), color: 0x8b5cf6}, // Away from Sun
+      {name: 'L3', pos: new THREE.Vector3(480, 0, 0), color: 0x00ffaa}, // Behind Sun
+      {name: 'L4', pos: new THREE.Vector3(250, 433, 0), color: 0x00ffaa}, // 60 deg ahead
+      {name: 'L5', pos: new THREE.Vector3(250, -433, 0), color: 0x00ffaa} // 60 deg behind
+  ];
+  lagrangePoints.forEach(pt => {
+      const pMesh = new THREE.Mesh(new THREE.SphereGeometry(0.5, 16, 16), new THREE.MeshBasicMaterial({color: pt.color}));
+      pMesh.position.copy(pt.pos);
+      scene.add(pMesh);
+      // Small glow around L points
+      const pGlow = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshBasicMaterial({color: pt.color, transparent:true, opacity:0.15, blending: THREE.AdditiveBlending}));
+      pMesh.add(pGlow);
+  });
+
+  // Orbital line for Earth 
+  const earthOrbitGeo = new THREE.BufferGeometry().setFromPoints(
+      new Array(120).fill(0).map((_,i)=>new THREE.Vector3(500*Math.cos(i/120*Math.PI*2)-500, 500*Math.sin(i/120*Math.PI*2), 0))
+  );
+  earthOrbitGeo.rotateX(Math.PI/2);
+  scene.add(new THREE.Line(earthOrbitGeo, new THREE.LineBasicMaterial({color: 0x445566, transparent:true, opacity:0.5})));
+
+  // L2 Pivot (Always opposite the sun relative to Earth)
+  // L2 is at -20 on X
   l2Pivot = new THREE.Group();
   l2Pivot.position.set(-20, 0, 0);
   scene.add(l2Pivot);
@@ -639,14 +671,15 @@ function buildScene() {
   window.addEventListener('mouseup', ()=>dragging=false);
   cv.addEventListener('mousemove', e=>{
     if(!dragging) return;
-    theta -= (e.clientX-lastX)*0.005;
-    phi = Math.max(0.05, Math.min(Math.PI-0.05, phi-(e.clientY-lastY)*0.005));
+    const sens = followMode ? 0.008 : 0.005;
+    theta -= (e.clientX-lastX)*sens;
+    phi = Math.max(0.05, Math.min(Math.PI-0.05, phi-(e.clientY-lastY)*sens));
     lastX=e.clientX; lastY=e.clientY; updateCam();
   });
   cv.addEventListener('wheel', e=>{
-    radius = Math.max(10, Math.min(150, radius*(1+e.deltaY*0.001)));
+    radius = Math.max(followMode?2:10, Math.min(followMode?40:300, radius*(1+e.deltaY*0.001)));
     updateCam(); e.preventDefault();
-  });
+  }, {passive:false});
 
   document.getElementById('jwst-cam-overview')?.addEventListener('click', ()=>{
       followMode = false; radius=25; phi=Math.PI/3; theta=Math.PI/4; updateCam();
@@ -1008,7 +1041,7 @@ let mtFullPathLine = null;           // pre-drawn complete trajectory
 let mtFlybyRing    = null;           // glowing ring during flyby
 let mtT=0, mtSpd=1, mtPlaying=false, mtBuilt=false;
 let mtLaunchPhase=false, mtLaunchT=0;
-let mtNarrationOn=true;
+let mtNarrationOn=false;
 let mtLastCraftPos=null;
 let mtRocketMesh=null, mtExhaustPts=null, mtExhaustPos=null;
 let mtDragging=false, mtLastX=0, mtLastY=0;
@@ -1039,8 +1072,10 @@ function mtMakeOrbitRing(au, color, opacity) {
     pts.push(new THREE.Vector3(au*Math.cos(th),0,au*Math.sin(th)));
   }
   const geo = new THREE.BufferGeometry().setFromPoints(pts);
-  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity});
-  return new THREE.Line(geo, mat);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity, depthWrite:false, depthTest:false});
+  const line = new THREE.Line(geo, mat);
+  line.renderOrder = -1;
+  return line;
 }
 
 // ── FULL TRAJECTORY: pre-draw entire path as faint dashes ──────
@@ -1558,14 +1593,8 @@ function mtRenderLoop() {
           banner.classList.add('show');banner.style.display='block';
           setTimeout(()=>{banner.classList.remove('show');setTimeout(()=>banner.style.display='none',500);},4000);
 
-          if(mtNarrationOn&&currentPhase.desc&&'speechSynthesis'in window){
-            window.speechSynthesis.cancel();
-            const utt=new SpeechSynthesisUtterance(currentPhase.name+'. '+currentPhase.desc);
-            utt.rate=0.9;utt.pitch=0.86;utt.volume=0.9;
-            const voices=window.speechSynthesis.getVoices();
-            const pref=voices.find(v=>/google uk english male|daniel|reed/i.test(v.name))||voices.find(v=>v.lang==='en-GB')||voices.find(v=>v.lang.startsWith('en'));
-            if(pref)utt.voice=pref;
-            window.speechSynthesis.speak(utt);
+          if(mtNarrationOn && currentPhase.desc){
+            // Narration disabled for hackathon cinematic feel
           }
 
           const descEl=document.getElementById('mt-desc-text');
@@ -6353,6 +6382,8 @@ document.getElementById('sky-loc-btn')?.addEventListener('click', () => {
     cw = cv.parentElement.offsetWidth || 800;
     ch = 500; 
     cv.width = cw; cv.height = ch;
+    cv.style.height = ch + 'px';
+    cv.style.width = '100%';
     ctx = cv.getContext('2d', {alpha: false});
     
     resetUniverse();
@@ -6472,13 +6503,26 @@ document.getElementById('sky-loc-btn')?.addEventListener('click', () => {
     
     // Draw event horizon if active
     if (isSingularityActive && !isAntimatter) {
+        // Accretion disk
         ctx.beginPath();
-        const r = Math.max(5, singMass);
-        ctx.arc(singX, singY, r, 0, Math.PI*2);
+        const r = Math.max(5, singMass) * 1.5;
+        ctx.ellipse(singX, singY, r*1.8, r*0.4, 0, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255, 120, 50, 0.4)';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 180, 80, 0.8)';
+        ctx.stroke();
+
+        // Event Horizon
+        ctx.beginPath();
+        ctx.arc(singX, singY, Math.max(5, singMass), 0, Math.PI*2);
         ctx.fillStyle = '#000000';
         ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(255,107,53, 0.8)'; // orange accretion disk
+        
+        ctx.beginPath();
+        ctx.arc(singX, singY, Math.max(5, singMass)*1.1, 0, Math.PI*2);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(255, 100, 40, 0.9)';
         ctx.stroke();
     }
     

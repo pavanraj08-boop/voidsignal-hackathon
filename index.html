@@ -83,23 +83,17 @@
 </section>
 
 <!-- ═══════════════════════════════════════════════
-     TERMINAL — AI POWERED
+     FLOATING AI TERMINAL WINDOW
 ════════════════════════════════════════════════ -->
-<div class="wrap" id="terminal-s" style="border-top:1px solid var(--bd)">
-  <div class="sh">
-    <span class="st">// AI INTERFACE</span>
-    <h2 class="sn">MISSION TERMINAL <span style="color:var(--c);font-size:.7rem">// AI</span></h2>
-    <div class="sl"></div>
-    <span class="smeta">CLAUDE-POWERED · SPACE INTELLIGENCE AGENT</span>
-  </div>
-  <div class="term-wrap">
-    <div class="term-hd">
-      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+<div class="ai-window hidden" id="terminal-window">
+  <div class="term-wrap" style="margin:0; height:100%; display:flex; flex-direction:column;">
+    <div class="term-hd" id="ai-drag-handle" style="cursor:move;">
+      <div class="t-dot r" onclick="closeAIFab()"></div><div class="t-dot y"></div><div class="t-dot g"></div>
       <span style="font-size:.58rem;color:var(--dim);margin-left:.5rem">AI ENGINE:</span>
       <span style="font-size:.58rem;color:var(--g);margin-left:.3rem" id="ai-status">⬡ STANDBY</span>
-      <span class="tlab">VOIDSIGNAL TERMINAL v10.0 // CLAUDE UPLINK</span>
+      <span class="tlab">VOIDSIGNAL TERMINAL // CLAUDE</span>
     </div>
-    <div class="term-out" id="to"></div>
+    <div class="term-out" id="to" style="flex:1; overflow-y:auto;"></div>
     <div class="term-ir">
       <span class="tip">void@signal:~$</span>
       <input id="ti" type="text" placeholder="ask anything about space, physics, satellites..." autocomplete="off" spellcheck="false">
@@ -1061,25 +1055,39 @@
 <script src="main.js"></script>
 
 <script>
-// Floating AI button scroll-to
+// Floating AI window logic
 function openAIFab() {
-  const el = document.getElementById('terminal-s');
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
-  // Flash the terminal input
-  setTimeout(() => {
-    const inp = document.getElementById('ti');
-    if (inp) { inp.focus(); inp.placeholder = 'Ask VoidSignal AI anything about space...'; }
-  }, 600);
+  const win = document.getElementById('terminal-window');
+  if (win) {
+    win.classList.remove('hidden');
+    document.getElementById('ti')?.focus();
+  }
+}
+function closeAIFab() {
+  const win = document.getElementById('terminal-window');
+  if (win) win.classList.add('hidden');
 }
 
-// Hide fab when terminal is in viewport
-const fabEl = document.getElementById('ai-fab');
-const termEl = document.getElementById('terminal-s');
-if (fabEl && termEl) {
-  const fabObs = new IntersectionObserver(entries => {
-    fabEl.classList.toggle('hidden', entries[0].isIntersecting);
-  }, { threshold: 0.3 });
-  fabObs.observe(termEl);
+// Draggable AI Window
+const winEl = document.getElementById('terminal-window');
+const handle = document.getElementById('ai-drag-handle');
+if(winEl && handle) {
+  let isDragging = false, startX, startY, initialX, initialY;
+  handle.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.clientX; startY = e.clientY;
+    const rect = winEl.getBoundingClientRect();
+    initialX = rect.left; initialY = rect.top;
+    winEl.style.transform = 'none';
+    winEl.style.right = 'auto'; winEl.style.bottom = 'auto';
+    winEl.style.left = initialX + 'px'; winEl.style.top = initialY + 'px';
+  });
+  window.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    winEl.style.left = (initialX + e.clientX - startX) + 'px';
+    winEl.style.top = (initialY + e.clientY - startY) + 'px';
+  });
+  window.addEventListener('mouseup', () => isDragging = false);
 }
 
 // Cursor glow

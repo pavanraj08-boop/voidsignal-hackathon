@@ -735,6 +735,42 @@ nav, .tick, #hero, .wrap, section, div.wrap, footer {
 #sf { display: none !important; }
 
 /* ══════════════════════════════════════
+   FLOATING AI TERMINAL WINDOW
+══════════════════════════════════════ */
+.ai-window {
+  position: fixed;
+  bottom: 6rem;
+  right: 2rem;
+  width: 400px;
+  height: 500px;
+  background: rgba(3, 6, 16, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.45);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0,212,255,0.15);
+  border-radius: 12px;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  overflow: hidden;
+}
+
+.ai-window.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.95);
+}
+
+@media(max-width:500px) {
+  .ai-window {
+    width:calc(100% - 2rem);
+    height: 400px;
+    right: 1rem;
+    bottom: 5rem;
+  }
+}
+
+/* ══════════════════════════════════════
    FLOATING AI TERMINAL BUTTON (FAB)
 ══════════════════════════════════════ */
 .ai-fab {
